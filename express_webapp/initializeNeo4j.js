@@ -1,6 +1,6 @@
 const neo4j = require('neo4j-driver');
 
-const uri = 'bolt://localhost:7687';  // URL de Neo4j (remplacez par l'URI de votre instance Neo4j)
+const uri = 'bolt://127.0.0.1:7687';  // URL de Neo4j (remplacez par l'URI de votre instance Neo4j)
 const user = 'neo4j';  // Nom d'utilisateur
 const password = 'cluedoneo4j';  // Mot de passe Neo4j
 

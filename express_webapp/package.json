@@ -9,10 +9,11 @@
   "dependencies": {
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "cluedo": "file:",
     "connect-db": "file:../connect-db",
     "cookie-parser": "~1.4.4",
     "debug": "~4.3.0",
-    "ejs": "^3.1.9",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "http-errors": "~2.0.0",
