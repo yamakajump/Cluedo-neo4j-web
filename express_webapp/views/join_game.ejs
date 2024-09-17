@@ -10,19 +10,53 @@
     <div class="menu-container">
         <div class="frame">
             <h2>Rejoindre la Partie</h2>
-            <p>Code de la partie : <strong id="gameCode"></strong></p>
-            <p>Joueur : <strong id="playerName"></strong></p>
+            <p>Code de la partie : <strong id="gameCode"><%= gameCode %></strong></p>
+            <button class="copy-button" onclick="copyCode()">Copier le code</button>
+            <p>Joueur : <strong id="playerName"><%= playerName %></strong></p>
+            <h3>Joueurs dans la partie :</h3>
+            <ul id="playersList">
+                <!-- Liste des joueurs sera injectée ici par JavaScript -->
+            </ul>
         </div>
     </div>
 
     <script>
-        // Récupérer les paramètres de l'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameCode = urlParams.get('gameCode');
-        const playerName = urlParams.get('playerName');
+        const gameCode = document.getElementById('gameCode').textContent;
 
-        document.getElementById('gameCode').textContent = gameCode;
-        document.getElementById('playerName').textContent = playerName;
+        // Fonction pour copier le code de la partie sans popup
+        function copyCode() {
+            navigator.clipboard.writeText(gameCode).then(() => {
+                console.log('Code de la partie copié :', gameCode);
+            }).catch(err => {
+                console.error('Échec de la copie du code :', err);
+            });
+        }
+
+        // Fonction pour récupérer la liste des joueurs
+        async function fetchPlayers() {
+            try {
+                const response = await fetch(`/api/game/getPlayers/${gameCode}`);
+                const data = await response.json();
+                const playersList = document.getElementById('playersList');
+                
+                // Effacer la liste actuelle
+                playersList.innerHTML = '';
+
+                // Ajouter chaque joueur à la liste
+                data.players.forEach(player => {
+                    const li = document.createElement('li');
+                    li.textContent = player;
+                    playersList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Erreur lors de la récupération des joueurs :', error);
+            }
+        }
+
+        // Rafraîchir la liste des joueurs toutes les 5 secondes
+        setInterval(fetchPlayers, 5000);
+        // Appeler une première fois la fonction pour charger immédiatement les joueurs
+        fetchPlayers();
     </script>
 </body>
 </html>

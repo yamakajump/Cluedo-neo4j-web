@@ -1,4 +1,4 @@
-const driver = require('../../initializeNeo4j'); // Connexion à Neo4j
+const driver = require('../../../initializeNeo4j'); // Connexion à Neo4j
 
 // Fonction pour vérifier si un joueur est propriétaire d'une partie
 async function playerIsOwner(req, res) {

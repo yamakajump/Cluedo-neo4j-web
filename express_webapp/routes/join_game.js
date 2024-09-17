@@ -1,38 +1,58 @@
-var express = require('express');
-var router = express.Router();
-const driver = require('../initializeNeo4j');  // Connexion à Neo4j
+const express = require('express');
+const router = express.Router();
+const axios = require('axios');
 
-router.get('/:code', async function(req, res, next) {
-    const gameCode = req.params.code;
-    const pseudo = req.query.pseudo;  // Récupérer le pseudo dans l'URL
+/* GET join game page */
+router.get('/', function(req, res) {
+    const { gameCode, playerName } = req.session;  // Récupérer les informations depuis la session
 
-    const session = driver.session();
+    if (!gameCode || !playerName) {
+        // Si le gameCode ou playerName n'est pas défini, rediriger vers la page principale
+        return res.redirect('/');
+    }
+
+    // Rendre la vue `join_game` avec les informations du jeu
+    res.render('join_game', { gameCode, playerName });
+});
+
+/* POST request to join game */
+router.post('/', async function(req, res, next) {
+    const playerName = req.body.joinPseudo;  // Récupérer le pseudo du formulaire
+    const gameCode = req.body.gameCode;      // Récupérer le code de la partie
+
     try {
-        // Vérifier si la partie existe
-        const result = await session.run(
-            `MATCH (p:Partie {code: $gameCode})
-             RETURN p`,
-            { gameCode }
-        );
+        // Appel à l'API pour rejoindre une partie
+        const response = await axios.post('http://localhost:3000/api/game/joinGame', {
+            playerName,
+            gameCode
+        });
 
-        if (result.records.length === 0) {
-            return res.status(404).send('Partie introuvable');
+        // Récupérer les informations de la réponse
+        const { playerId } = response.data;
+
+        // Stocker les informations dans la session
+        req.session.gameCode = gameCode;
+        req.session.playerName = playerName;
+        req.session.playerId = playerId;
+
+        // Sauvegarder la session avant de rediriger
+        req.session.save(() => {
+            // Rediriger vers la page de gestion de la partie
+            if (!res.headersSent) {
+                res.redirect(`/join_game`);
+            }
+        });
+    } catch (error) {
+        // Vérifier si l'erreur est due à la non-existence de la partie
+        if (error.response && error.response.status === 404) {
+            return res.status(404).render('error', { message: 'Partie introuvable.' });
         }
 
-        // Ajouter le joueur à la partie
-        await session.run(
-            `MERGE (j:Joueur {name: $pseudo})
-             MERGE (p:Partie {code: $gameCode})
-             MERGE (j)-[:JOUE_DANS]->(p)`,
-            { pseudo, gameCode }
-        );
-
-        res.render('join_game', { gameCode: gameCode, pseudo: pseudo });
-    } catch (error) {
-        console.error('Erreur lors de la jonction à la partie:', error);
-        res.status(500).send('Erreur lors de la jonction à la partie.');
-    } finally {
-        await session.close();
+        // Autres erreurs non spécifiques
+        if (!res.headersSent) {
+            console.error('Erreur lors de la jonction à la partie:', error);
+            res.status(500).render('error', { message: 'Erreur lors de la jonction à la partie.' });
+        }
     }
 });
 

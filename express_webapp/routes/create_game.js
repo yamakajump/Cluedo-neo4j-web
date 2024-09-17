@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const { checkPlayerStatusAndRedirect } = require('./redirectionCheck'); 
 
 /* GET create game page */
-router.get('/', function(req, res) {
+router.get('/', async function(req, res) {
     const { gameCode, playerName } = req.session;  // Récupérer les informations depuis la session
 
     if (!gameCode || !playerName) {
@@ -12,10 +11,18 @@ router.get('/', function(req, res) {
         return res.redirect('/');
     }
 
-    // Rendre la vue `create_game` avec les informations du jeu
-    res.render('create_game', { gameCode, playerName });
-});
+    try {
+        // Requête vers l'API pour obtenir la liste des joueurs
+        const response = await axios.get(`http://localhost:3000/api/game/getPlayers/${gameCode}`);
+        const players = response.data.players;
 
+        // Rendre la vue `create_game` avec la liste des joueurs en plus des autres informations
+        res.render('create_game', { gameCode, playerName, players });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des joueurs:', error);
+        res.status(500).render('error', { message: 'Erreur lors de la récupération des joueurs.' });
+    }
+});
 
 /* POST request to create game */
 router.post('/', async function(req, res, next) {
@@ -24,7 +31,7 @@ router.post('/', async function(req, res, next) {
 
     try {
         // Appel à l'API pour créer une partie, en passant playerName et playerId (si existant)
-        const response = await axios.post('http://localhost:3000/api/game/create', {
+        const response = await axios.post('http://localhost:3000/api/game/createGame', {
             playerName,
             playerId // Passer l'ID du joueur à l'API
         });
@@ -36,12 +43,16 @@ router.post('/', async function(req, res, next) {
         req.session.playerName = playerName;
         req.session.playerId = newPlayerId;
 
+        // Requête vers l'API pour obtenir la liste des joueurs après la création de la partie
+        const playersResponse = await axios.get(`http://localhost:3000/api/game/getPlayers/${gameCode}`);
+        const players = playersResponse.data.players;
+
         // Sauvegarder la session avant de rediriger
         req.session.save(() => {
             // Assure-toi que `res.render` est appelé une seule fois
             if (!res.headersSent) {
-                // Rediriger vers la page de gestion de la partie
-                res.render('create_game', { gameCode, playerName });
+                // Rediriger vers la page de gestion de la partie avec la liste des joueurs
+                res.render('create_game', { gameCode, playerName, players });
             }
         });
     } catch (error) {
@@ -53,9 +64,13 @@ router.post('/', async function(req, res, next) {
             req.session.gameCode = existingGameCode;
             req.session.playerName = playerName;
 
+            // Requête vers l'API pour obtenir la liste des joueurs
+            const playersResponse = await axios.get(`http://localhost:3000/api/game/getPlayers/${existingGameCode}`);
+            const players = playersResponse.data.players;
+
             return req.session.save(() => {
-                // Rediriger vers la page de la partie en cours
-                res.redirect(`/create_game`);
+                // Rediriger vers la page de la partie en cours avec la liste des joueurs
+                res.render('create_game', { gameCode: existingGameCode, playerName, players });
             });
         }
 

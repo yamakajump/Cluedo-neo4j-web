@@ -14,12 +14,17 @@ var indexRouter = require('./routes/index');
 var create_gameRouter = require('./routes/create_game');
 var join_gameRouter = require('./routes/join_game');
 var chooseRouter = require('./routes/choose');  
+
+// Import des routes de l'API
 var adminApiRouter = require('./routes/api/admin'); 
 
-// Import des routes de l'API jeu
+var checkGameStatusApi = require('./routes/api/game/checkGameStatus');
 var createGameApi = require('./routes/api/game/createGame');
+var getPlayersApi = require('./routes/api/game/getPlayers');
 var joinGameApi = require('./routes/api/game/joinGame');
 var startGameApi = require('./routes/api/game/startGame');
+
+var playerIsOwnerApi = require('./routes/api/verif/playerIsOwner');
 
 var app = express();
 
@@ -65,10 +70,15 @@ app.use('/create_game', create_gameRouter);
 app.use('/join_game', join_gameRouter);
 
 // Routes pour l'API
-app.use('/api/game/create', createGameApi);
-app.use('/api/game/join', joinGameApi);
-app.use('/api/game/start', startGameApi);
-app.use('/api/admin', adminApiRouter);  // Route pour les fonctionnalités admin (comme le clear)
+app.use('/api/admin', adminApiRouter); 
+
+app.use('/api/game/checkGameStatus', checkGameStatusApi);
+app.use('/api/game/createGame', createGameApi);
+app.use('/api/game/getPlayers', getPlayersApi);
+app.use('/api/game/joinGame', joinGameApi);
+app.use('/api/game/startGame', startGameApi);
+
+app.use('/api/verif/playerIsOwner', playerIsOwnerApi);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

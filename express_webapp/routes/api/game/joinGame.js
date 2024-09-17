@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
         );
 
         if (result.records.length === 0) {
-            return res.status(404).render('error', { message: 'Partie introuvable.' });
+            return res.status(404).json({ message: 'Partie introuvable.' });
         }
 
         // Ajouter le joueur à la partie avec un identifiant unique
@@ -30,11 +30,11 @@ router.post('/', async (req, res) => {
             { playerId, playerName, gameCode }
         );
 
-        // Rediriger vers la page de la partie
-        res.redirect(`/join_game/${gameCode}?playerName=${encodeURIComponent(playerName)}`);
+        // Retourner les données au lieu de rediriger
+        res.json({ message: 'Joueur ajouté avec succès.', gameCode, playerName });
     } catch (error) {
         console.error('Erreur lors de la jonction à la partie:', error);
-        res.status(500).render('error', { message: 'Erreur lors de la jonction à la partie.' });
+        res.status(500).json({ message: 'Erreur lors de la jonction à la partie.' });
     } finally {
         await session.close();
     }
