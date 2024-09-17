@@ -14,12 +14,14 @@ var indexRouter = require('./routes/index');
 var create_gameRouter = require('./routes/create_game');
 var join_gameRouter = require('./routes/join_game');
 var chooseRouter = require('./routes/choose');  
+var exitGameRouter = require('./routes/exit_game');
 
 // Import des routes de l'API
 var adminApiRouter = require('./routes/api/admin'); 
 
 var checkGameStatusApi = require('./routes/api/game/checkGameStatus');
 var createGameApi = require('./routes/api/game/createGame');
+var exitGameApi = require('./routes/api/game/exitGame');
 var getPlayersApi = require('./routes/api/game/getPlayers');
 var joinGameApi = require('./routes/api/game/joinGame');
 var startGameApi = require('./routes/api/game/startGame');
@@ -68,12 +70,14 @@ app.use('/', indexRouter);
 app.use('/choose', chooseRouter);  
 app.use('/create_game', create_gameRouter);
 app.use('/join_game', join_gameRouter);
+app.use('/exit_game', exitGameRouter);
 
 // Routes pour l'API
 app.use('/api/admin', adminApiRouter); 
 
 app.use('/api/game/checkGameStatus', checkGameStatusApi);
 app.use('/api/game/createGame', createGameApi);
+app.use('/api/game/exitGame', exitGameApi);
 app.use('/api/game/getPlayers', getPlayersApi);
 app.use('/api/game/joinGame', joinGameApi);
 app.use('/api/game/startGame', startGameApi);

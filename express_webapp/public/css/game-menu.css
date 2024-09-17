@@ -53,7 +53,7 @@ body, html {
     margin-bottom: 1rem;
 }
 
-.create-button, .join-button, .copy-button, .start-button  {
+.button  {
     background-color: #ffcc00; /* Jaune vif cartoon */
     color: #333;
     padding: 12px 24px;
@@ -66,7 +66,7 @@ body, html {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.create-button:hover, .join-button:hover, .copy-button:hover, .start-button:hover {
+.button:hover {
     background-color: #ff9900; /* Plus foncé au survol */
     box-shadow: 4px 6px 10px rgba(0, 0, 0, 0.4); /* Ombre plus prononcée au survol */
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partie Créée</title>
-    <link rel="stylesheet" href="/css/game-menu.css"> <!-- Utilisation du CSS cartoon -->
+    <link rel="stylesheet" href="/css/game-menu.css">
 </head>
 <body>
     <div class="menu-container">
@@ -12,12 +12,15 @@
             <h2>Partie Créée</h2>
             <p>Votre code de partie : <strong id="gameCode"><%= gameCode %></strong></p>
             <p>Créateur : <strong id="playerName"><%= playerName %></strong></p>
-            <button class="copy-button" onclick="copyCode()">Copier le code</button>
-            <button class="start-button" onclick="startGame()">Démarrer la partie</button>
+            <button class="button" onclick="copyCode()">Copier le code</button>
+            <button class="button" onclick="startGame()">Démarrer la partie</button>
+            <button class="button" onclick="deleteGame()">Supprimer la partie</button> <!-- Nouveau bouton pour supprimer la partie -->
 
             <h3>Joueurs dans la partie :</h3>
             <ul id="playersList">
-                <!-- Liste des joueurs sera injectée ici par JavaScript -->
+                <% players.forEach(function(player) { %>
+                    <li><%= player %></li>
+                <% }); %>
             </ul>
         </div>
     </div>
@@ -26,32 +29,47 @@
         const gameCode = '<%= gameCode %>';
         const playerName = '<%= playerName %>';
 
-
-        // Fonction pour copier le code de la partie sans popup
+        // Fonction pour copier le code
         function copyCode() {
             navigator.clipboard.writeText(gameCode).then(() => {
-                console.log('Code de la partie copié :', gameCode);
+                console.log('Code copié : ' + gameCode);
             }).catch(err => {
-                console.error('Échec de la copie du code :', err);
+                console.error('Erreur lors de la copie du code :', err);
             });
         }
 
+        // Fonction pour démarrer la partie
         function startGame() {
             alert('La partie va commencer !');
             // Logique pour démarrer la partie
         }
 
-        // Fonction pour récupérer la liste des joueurs
+        // Fonction pour supprimer la partie (seulement par le propriétaire)
+        async function deleteGame() {
+            const confirmed = confirm('Voulez-vous vraiment supprimer la partie ?');
+            if (confirmed) {
+                try {
+                    const response = await fetch(`/exit_game/delete/${gameCode}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        alert('Partie supprimée avec succès.');
+                        window.location.href = '/'; // Rediriger vers la page principale
+                    } else {
+                        alert('Erreur lors de la suppression de la partie.');
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la suppression de la partie :', error);
+                }
+            }
+        }
+
+
+        // Rafraîchir la liste des joueurs
         async function fetchPlayers() {
             try {
                 const response = await fetch(`/api/game/getPlayers/${gameCode}`);
                 const data = await response.json();
                 const playersList = document.getElementById('playersList');
-                
-                // Effacer la liste actuelle
                 playersList.innerHTML = '';
-
-                // Ajouter chaque joueur à la liste
                 data.players.forEach(player => {
                     const li = document.createElement('li');
                     li.textContent = player;
@@ -61,10 +79,7 @@
                 console.error('Erreur lors de la récupération des joueurs :', error);
             }
         }
-
-        // Rafraîchir la liste des joueurs toutes les 5 secondes
         setInterval(fetchPlayers, 5000);
-        // Appeler une première fois la fonction pour charger immédiatement les joueurs
         fetchPlayers();
     </script>
 </body>

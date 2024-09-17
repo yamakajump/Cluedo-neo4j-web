@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
         );
 
         // Retourner les données au lieu de rediriger
-        res.json({ message: 'Joueur ajouté avec succès.', gameCode, playerName });
+        res.json({ message: 'Joueur ajouté avec succès.', gameCode, playerName, playerId });
     } catch (error) {
         console.error('Erreur lors de la jonction à la partie:', error);
         res.status(500).json({ message: 'Erreur lors de la jonction à la partie.' });
