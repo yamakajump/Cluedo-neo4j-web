@@ -3,6 +3,7 @@ const driver = require('../initializeNeo4j'); // Connexion à Neo4j
 // Méthode pour vérifier l'état d'un joueur, son existence et rediriger en conséquence
 async function checkPlayerStatusAndRedirect(req, res) {
     const playerId = req.session.playerId;  // Utiliser l'ID du joueur depuis la session
+    const playerName = req.session.playerName; // Utiliser le nom du joueur depuis la session
 
     if (!playerId) {
         return false;  // Pas de redirection ni de rendu
@@ -50,7 +51,7 @@ async function checkPlayerStatusAndRedirect(req, res) {
 
         // Si le joueur est propriétaire, rediriger vers la page de création
         if (isOwner) {
-            res.render('create_game', { gameCode });  // Rendre la vue create_game
+            res.render('create_game', { gameCode, playerName }); // Rendre la vue create_game
             return true;  // Vue rendue ou redirection
         } 
         // Sinon, rediriger vers la page pour rejoindre la partie

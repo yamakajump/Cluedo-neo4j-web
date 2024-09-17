@@ -10,21 +10,16 @@
     <div class="menu-container">
         <div class="frame">
             <h2>Partie Créée</h2>
-            <p>Votre code de partie : <strong id="gameCode"></strong></p>
-            <p>Créateur : <strong id="playerName"></strong></p>
+            <p>Votre code de partie : <strong id="gameCode"><%= gameCode %></strong></p> <!-- Utilisation de EJS pour insérer les données -->
+            <p>Créateur : <strong id="playerName"><%= playerName %></strong></p> <!-- Utilisation de EJS pour insérer les données -->
             <button class="copy-button" onclick="copyCode()">Copier le code</button>
             <button class="start-button" onclick="startGame()">Démarrer la partie</button>
         </div>
     </div>
 
     <script>
-        // Récupérer les paramètres de l'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameCode = urlParams.get('gameCode');
-        const playerName = urlParams.get('playerName');
-
-        document.getElementById('gameCode').textContent = gameCode;
-        document.getElementById('playerName').textContent = playerName;
+        const gameCode = '<%= gameCode %>';  // Injecter les données directement dans le script
+        const playerName = '<%= playerName %>';
 
         function copyCode() {
             navigator.clipboard.writeText(gameCode);
