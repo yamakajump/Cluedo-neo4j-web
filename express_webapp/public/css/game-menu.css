@@ -1,0 +1,99 @@
+/* Import de la police cartoon via Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Baloo Bhaijaan 2', cursive; /* Police cartoon */
+    background-image: url('/images/intro/intro_jeu.png'); /* Image de fond */
+    background-size: cover; /* Couvre toute la fenêtre */
+    background-repeat: no-repeat; /* Empêche la répétition de l'image */
+    background-position: center; /* Centre l'image */
+    overflow: hidden; /* Empêche tout défilement */
+}
+
+.menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh; /* Fait en sorte que le conteneur prenne toute la hauteur */
+    position: relative;
+    z-index: 1; /* S'assure que le conteneur est bien au-dessus du fond */
+}
+
+.frame {
+    background-image: url('/images/utils/cadre_formulaire.png'); /* Utilisation de votre cadre */
+    background-size: 100% 100%; /* Adapter le cadre à la taille du conteneur */
+    width: 100%; /* Prendre 100% de l'espace disponible */
+    max-width: 400px; /* Limite la largeur à 400px maximum */
+    aspect-ratio: 3 / 4; /* Maintient le ratio du cadre */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.create-section, .join-section {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.create-section h2, .join-section h2 {
+    font-size: 2.2rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Ombre pour un effet cartoon */
+    margin-bottom: 1rem;
+}
+
+.create-button, .join-button, .copy-button, .start-button  {
+    background-color: #ffcc00; /* Jaune vif cartoon */
+    color: #333;
+    padding: 12px 24px;
+    border: 2px solid #ff9900;
+    border-radius: 40px; /* Bordures très arrondies pour un effet amical */
+    font-size: 1.4rem;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3); /* Ajout d'une ombre portée */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.create-button:hover, .join-button:hover, .copy-button:hover, .start-button:hover {
+    background-color: #ff9900; /* Plus foncé au survol */
+    box-shadow: 4px 6px 10px rgba(0, 0, 0, 0.4); /* Ombre plus prononcée au survol */
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2); /* Petit effet de relief */
+}
+
+input[type="text"]:focus {
+    border-color: #ffcc00;
+    outline: none;
+}
+
+@media (max-width: 768px) {
+    .frame {
+        width: 90%; /* Limite à 90% de la largeur de l'écran sur mobile */
+        max-width: 350px; /* Réduit la taille maximale sur mobile */
+        aspect-ratio: 3 / 4; /* Maintient le ratio */
+    }
+
+    .create-button, .join-button {
+        width: 100%; /* Les boutons prennent toute la largeur sur mobile */
+    }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie Créée</title>
+    <link rel="stylesheet" href="/css/game-menu.css"> <!-- Utilisation du CSS cartoon -->
+</head>
+<body>
+    <div class="menu-container">
+        <div class="frame">
+            <h2>Partie Créée</h2>
+            <p>Votre code de partie : <strong id="gameCode"></strong></p>
+            <p>Créateur : <strong id="playerName"></strong></p>
+            <button class="copy-button" onclick="copyCode()">Copier le code</button>
+            <button class="start-button" onclick="startGame()">Démarrer la partie</button>
+        </div>
+    </div>
+
+    <script>
+        // Récupérer les paramètres de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameCode = urlParams.get('gameCode');
+        const playerName = urlParams.get('playerName');
+
+        document.getElementById('gameCode').textContent = gameCode;
+        document.getElementById('playerName').textContent = playerName;
+
+        function copyCode() {
+            navigator.clipboard.writeText(gameCode);
+            alert('Code copié : ' + gameCode);
+        }
+
+        function startGame() {
+            alert('La partie va commencer !');
+            // Logique pour démarrer la partie
+        }
+    </script>
+</body>
+</html>

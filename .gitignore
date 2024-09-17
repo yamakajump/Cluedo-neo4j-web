@@ -1,0 +1,4 @@
+# ignore les node_modules
+node_modules
+
+ngrok.exe

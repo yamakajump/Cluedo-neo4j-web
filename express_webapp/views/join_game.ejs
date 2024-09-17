@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejoindre une Partie</title>
+    <link rel="stylesheet" href="/css/game-menu.css"> <!-- Utilisation du CSS cartoon -->
+</head>
+<body>
+    <div class="menu-container">
+        <div class="frame">
+            <h2>Rejoindre la Partie</h2>
+            <p>Code de la partie : <strong id="gameCode"></strong></p>
+            <p>Joueur : <strong id="playerName"></strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Récupérer les paramètres de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameCode = urlParams.get('gameCode');
+        const playerName = urlParams.get('playerName');
+
+        document.getElementById('gameCode').textContent = gameCode;
+        document.getElementById('playerName').textContent = playerName;
+    </script>
+</body>
+</html>

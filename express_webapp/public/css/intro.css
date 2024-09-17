@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    background-image: url('/images/intro/intro_jeu.png'); /* Image de fond */
+    background-size: cover; /* Couvre toute la fenêtre */
+    background-position: center; /* Centre l'image */
+    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    position: relative; /* Pour positionner le bouton */
+}
+
+.play-button {
+    position: absolute;
+    animation: float 2s ease-in-out infinite; /* Animation de flottement */
+    height: 30%;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0); }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir Créer ou Rejoindre</title>
+    <link rel="stylesheet" href="/css/game-menu.css"> <!-- Utilisation du CSS pour le style du menu -->
+</head>
+<body>
+    <div class="menu-container">
+        <div class="frame">
+            <!-- Section pour créer une partie -->
+            <div class="create-section">
+                <h2>Créer une Partie</h2>
+                <form action="/create_game" method="POST"> <!-- Redirection vers la route backend -->
+                    <input type="text" name="createPseudo" placeholder="Entrer votre pseudo" required>
+                    <button type="submit" class="create-button">Créer</button>
+                </form>
+            </div>
+
+            <!-- Section pour rejoindre une partie -->
+            <div class="join-section">
+                <h2>Rejoindre une Partie</h2>
+                <form action="/join_game" method="POST"> <!-- Redirection vers la route backend -->
+                    <input type="text" name="joinPseudo" placeholder="Entrer votre pseudo" required>
+                    <input type="text" name="gameCode" placeholder="Entrer le code de la partie" required>
+                    <button type="submit" class="join-button">Rejoindre</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
