@@ -26,7 +26,7 @@ var getPlayersApi = require('./routes/api/game/getPlayers');
 var joinGameApi = require('./routes/api/game/joinGame');
 var startGameApi = require('./routes/api/game/startGame');
 
-var playerIsOwnerApi = require('./routes/api/verif/playerIsOwner');
+var checkPlayerStatusAndRedirectApi = require('./routes/api/verif/checkPlayerStatusAndRedirect');
 
 var app = express();
 
@@ -82,7 +82,7 @@ app.use('/api/game/getPlayers', getPlayersApi);
 app.use('/api/game/joinGame', joinGameApi);
 app.use('/api/game/startGame', startGameApi);
 
-app.use('/api/verif/playerIsOwner', playerIsOwnerApi);
+app.use('/api/verif/checkPlayerStatusAndRedirect', checkPlayerStatusAndRedirectApi);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
