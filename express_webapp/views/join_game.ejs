@@ -13,7 +13,7 @@
             <p>Code de la partie : <strong id="gameCode"><%= gameCode %></strong></p>
             <p>Joueur : <strong id="playerName"><%= playerName %></strong></p>
             <button class="button" onclick="copyCode()">Copier le code</button>
-            <button class="button" onclick="leaveGame()">Quitter la partie</button> <!-- Nouveau bouton -->
+            <button class="button" onclick="leaveGame()">Quitter la partie</button>
 
             <h3>Joueurs dans la partie :</h3>
             <ul id="playersList">
@@ -57,6 +57,13 @@
                 const response = await fetch(`/api/game/getPlayers/${gameCode}`);
                 const data = await response.json();
                 const playersList = document.getElementById('playersList');
+                
+                // Si aucun joueur n'est présent, rediriger vers la page d'accueil
+                if (data.players.length === 0) {
+                    window.location.href = '/';
+                    return;
+                }
+
                 playersList.innerHTML = '';
                 data.players.forEach(player => {
                     const li = document.createElement('li');
@@ -65,11 +72,12 @@
                 });
             } catch (error) {
                 console.error('Erreur lors de la récupération des joueurs :', error);
+                window.location.href = '/'; // En cas d'erreur, rediriger vers la page principale
             }
         }
 
-        setInterval(fetchPlayers, 5000);
-        fetchPlayers();
+        setInterval(fetchPlayers, 5000);  // Rafraîchir la liste toutes les 5 secondes
+        fetchPlayers();  // Appeler une première fois la fonction pour charger les joueurs immédiatement
     </script>
 </body>
 </html>

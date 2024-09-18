@@ -3,38 +3,44 @@ const router = express.Router();
 const driver = require('../../../initializeNeo4j');
 const { generatePlayerId } = require('./utils');  // Utiliser UUID pour les joueurs
 
-// Rejoindre une partie existante pour un joueur
 router.post('/', async (req, res) => {
     const session = driver.session();
     const { gameCode, playerName } = req.body;
-    let playerId = req.body.playerId || generatePlayerId();  // Utiliser l'ID du joueur s'il existe déjà
+    let playerId = req.body.playerId || generatePlayerId();  // Utiliser l'ID du joueur s'il existe déjà ou en générer un nouveau
 
     try {
-        // Vérifier si la partie existe
-        const result = await session.run(
+        // 1. Vérifier si le joueur est déjà dans une partie
+        const playerInGameResult = await session.run(
+            `MATCH (j:Joueur {id: $playerId})-[:JOUE_DANS]->(p:Partie)
+             RETURN p.code AS existingGameCode, j.owner AS isOwner`,
+            { playerId }
+        );
+
+        if (playerInGameResult.records.length > 0) {
+            // Le joueur est déjà dans une partie, retourner les informations existantes
+            const existingGameCode = playerInGameResult.records[0].get('existingGameCode');
+            const isOwner = playerInGameResult.records[0].get('isOwner');
+
+            return res.status(200).json({
+                message: 'Vous êtes déjà dans une partie.',
+                newGameCode: existingGameCode,
+                playerId,
+                isOwner
+            });
+        }
+
+        // 2. Si le joueur n'est pas dans une partie, vérifier si la partie spécifiée existe
+        const gameResult = await session.run(
             `MATCH (p:Partie {code: $gameCode})
              RETURN p`,
             { gameCode }
         );
 
-        if (result.records.length === 0) {
-            return res.status(404).json({ message: 'Partie introuvable.' });
+        if (gameResult.records.length === 0) {
+            return res.status(404).json({ message: 'Partie introuvable.', gameCode });
         }
 
-        // Vérifier si le joueur est déjà dans une partie
-        const playerResult = await session.run(
-            `MATCH (j:Joueur {name: $playerName})-[:JOUE_DANS]->(p:Partie {code: $gameCode})
-             RETURN j.id AS playerId`,
-            { playerName, gameCode }
-        );
-
-        if (playerResult.records.length > 0) {
-            // Le joueur est déjà dans la partie, renvoyer ses informations
-            playerId = playerResult.records[0].get('playerId');
-            return res.status(200).json({ message: 'Vous êtes déjà dans la partie.', gameCode, playerName, playerId });
-        }
-
-        // Sinon, ajouter le joueur à la partie avec un identifiant unique
+        // 3. Ajouter le joueur à la partie
         await session.run(
             `MERGE (j:Joueur {id: $playerId, name: $playerName})
              SET j.owner = false
@@ -43,10 +49,16 @@ router.post('/', async (req, res) => {
             { playerId, playerName, gameCode }
         );
 
-        res.json({ message: 'Joueur ajouté avec succès.', gameCode, playerName, playerId });
+        // 4. Retourner les informations du joueur et de la partie
+        res.status(200).json({
+            message: 'Joueur ajouté avec succès.',
+            newGameCode: gameCode,
+            playerId,
+            isOwner: false
+        });
     } catch (error) {
         console.error('Erreur lors de la jonction à la partie :', error);
-        res.status(500).json({ message: 'Erreur lors de la jonction à la partie.' });
+        res.status(500).json({ message: 'Erreur lors de la jonction à la partie.', gameCode });
     } finally {
         await session.close();
     }

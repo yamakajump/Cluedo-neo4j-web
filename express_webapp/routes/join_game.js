@@ -30,17 +30,20 @@ router.post('/', async function(req, res, next) {
         });
 
         // Récupérer les informations de la réponse
-        const { playerId: newPlayerId } = response.data;
+        const { playerId: newPlayerId, newGameCode, isOwner } = response.data;
 
         // Stocker les informations dans la session
-        req.session.gameCode = gameCode;
+        req.session.gameCode = newGameCode;
         req.session.playerName = playerName;
         req.session.playerId = newPlayerId;
 
         // Sauvegarder la session avant de rediriger
         req.session.save(() => {
-            // Rediriger vers la page de gestion de la partie
-            if (!res.headersSent) {
+            if (isOwner) {
+                // Si le joueur est propriétaire, rediriger vers la page de gestion de la partie
+                res.redirect(`/create_game`);
+            } else {
+                // Sinon, rediriger vers la page pour rejoindre la partie
                 res.redirect(`/join_game`);
             }
         });
