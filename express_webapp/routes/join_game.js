@@ -19,21 +19,23 @@ router.get('/', function(req, res) {
 router.post('/', async function(req, res, next) {
     const playerName = req.body.joinPseudo;  // Récupérer le pseudo du formulaire
     const gameCode = req.body.gameCode;      // Récupérer le code de la partie
+    const playerId = req.session.playerId;   // Récupérer l'ID du joueur s'il existe déjà dans la session
 
     try {
         // Appel à l'API pour rejoindre une partie
         const response = await axios.post('http://localhost:3000/api/game/joinGame', {
             playerName,
-            gameCode
+            gameCode,
+            playerId
         });
 
         // Récupérer les informations de la réponse
-        const { playerId } = response.data;
+        const { playerId: newPlayerId } = response.data;
 
         // Stocker les informations dans la session
         req.session.gameCode = gameCode;
         req.session.playerName = playerName;
-        req.session.playerId = playerId;
+        req.session.playerId = newPlayerId;
 
         // Sauvegarder la session avant de rediriger
         req.session.save(() => {
@@ -50,7 +52,7 @@ router.post('/', async function(req, res, next) {
 
         // Autres erreurs non spécifiques
         if (!res.headersSent) {
-            console.error('Erreur lors de la jonction à la partie:', error);
+            console.error('Erreur lors de la jonction à la partie :', error);
             res.status(500).render('error', { message: 'Erreur lors de la jonction à la partie.' });
         }
     }
