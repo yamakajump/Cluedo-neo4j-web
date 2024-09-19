@@ -21,7 +21,8 @@ router.get('/:gameCode', async (req, res) => {
         const gameStatus = response.data;
 
         if (gameStatus.started) {
-            res.render('game/game', { gameCode, playerId });
+            //TODO 
+            // res.render('game/game', { gameCode, playerId });
         } else {
             res.status(400).send('La partie n\'a pas encore démarré.');
         }
