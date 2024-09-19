@@ -93,14 +93,14 @@ app.use('/exit_game', require('./routes/exit_game'));
 app.use('/start_game', require('./routes/start_game'));
 
 // Importer les routes de l'API
-app.use('/api/admin', require('./routes/api/admin'));
-app.use('/api/game/checkGameStatus', require('./routes/api/game/checkGameStatus'));
-app.use('/api/game/createGame', require('./routes/api/game/createGame'));
-app.use('/api/game/exitGame', require('./routes/api/game/exitGame'));
-app.use('/api/game/getPlayers', require('./routes/api/game/getPlayers'));
-app.use('/api/game/joinGame', require('./routes/api/game/joinGame'));
-app.use('/api/game/startGame', require('./routes/api/game/startGame'));
-app.use('/api/verif/checkPlayerStatusAndRedirect', require('./routes/api/verif/checkPlayerStatusAndRedirect'));
+app.use('/api/admin', require('./api/admin'));
+app.use('/api/game/checkGameStatus', require('./api/game/checkGameStatus'));
+app.use('/api/game/createGame', require('./api/game/createGame'));
+app.use('/api/game/exitGame', require('./api/game/exitGame'));
+app.use('/api/game/getPlayers', require('./api/game/getPlayers'));
+app.use('/api/game/joinGame', require('./api/game/joinGame'));
+app.use('/api/game/startGame', require('./api/game/startGame'));
+app.use('/api/verif/checkPlayerStatusAndRedirect', require('./api/verif/checkPlayerStatusAndRedirect'));
 
 // Gestion des erreurs 404 et des autres erreurs
 app.use(function(req, res, next) {

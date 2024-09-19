@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const driver = require('../../../initializeNeo4j');
+const driver = require('../../initializeNeo4j');
 const { generatePlayerId } = require('./utils');  // Utiliser UUID pour les joueurs
 
 router.post('/', async (req, res) => {

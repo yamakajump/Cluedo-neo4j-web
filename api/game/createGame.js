@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const driver = require('../../../initializeNeo4j'); // Connexion à Neo4j
+const driver = require('../../initializeNeo4j'); // Connexion à Neo4j
 const { generateGameCode, generatePlayerId } = require('./utils');  // Importer les fonctions
 
 // Créer une nouvelle partie avec un joueur comme propriétaire

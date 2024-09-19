@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const driver = require('../../../initializeNeo4j'); // Connexion à Neo4j
+const driver = require('../../initializeNeo4j'); // Connexion à Neo4j
 
 // Supprimer la partie par le créateur
 router.delete('/delete/:gameCode', async (req, res) => {

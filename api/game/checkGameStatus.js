@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const driver = require('../../../initializeNeo4j'); // Connexion à Neo4j
+const driver = require('../../initializeNeo4j'); // Connexion à Neo4j
 
 // Vérifier si le joueur est déjà dans une partie
 router.get('/', async (req, res) => {
