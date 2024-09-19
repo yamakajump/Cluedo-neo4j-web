@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -6,6 +8,12 @@ var logger = require('morgan');
 var axios = require('axios');
 var http = require('http');  // Utiliser http pour créer le serveur
 var WebSocket = require('ws'); // Importer WebSocket
+
+// Charger les variables d'environnement
+const SERVER_IP = process.env.SERVER_IP || 'localhost';
+const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
+const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT || 3001;
+const DB_ADMIN_TOKEN = process.env.DB_ADMIN_TOKEN || 'default_token';
 
 // Créer l'application Express
 var app = express();
@@ -43,7 +51,7 @@ app.set('broadcast', broadcast);
 // Appel API pour nettoyer la base de données lors du démarrage
 async function clearDatabaseAtStartup() {
     try {
-        const response = await axios.delete('http://localhost:3000/api/admin/clear', {
+        const response = await axios.delete(`http://${SERVER_IP}:${EXPRESS_PORT}/api/admin/clear`, {
             headers: {
                 'Authorization': 'mdpsecu'  // Remplacer par ton token si nécessaire
             }
@@ -106,9 +114,9 @@ app.use(function(err, req, res, next) {
     res.render('error', { user: req.session.user });
 });
 
-// Démarrer le serveur HTTP et WebSocket sur le port 3000
-server.listen(3001, function() {
-    console.log('Serveur Express et WebSocket en cours d\'exécution sur le port 3000');
+// Démarrer le serveur WebSocket
+server.listen(WEBSOCKET_PORT, function() {
+    console.log(`Serveur WebSocket en cours d\'exécution sur le port ${WEBSOCKET_PORT}`);
 });
 
 module.exports = app;

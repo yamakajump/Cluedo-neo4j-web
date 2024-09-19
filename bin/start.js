@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 
+require('dotenv').config();
+
 var app = require('../app');
 var debug = require('debug')('express-webapp:server');
 var http = require('http');
@@ -12,7 +14,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = process.env.EXPRESS_PORT || 3000;
 app.set('port', port);
 
 /**

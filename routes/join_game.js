@@ -1,6 +1,11 @@
+require('dotenv').config(); // Charger les variables d'environnement depuis le fichier .env
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+
+// Récupérer les variables d'environnement pour l'IP du serveur et le port
+const SERVER_IP = process.env.SERVER_IP || 'localhost';
+const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
 
 /* GET join game page */
 router.get('/', function(req, res) {
@@ -23,7 +28,7 @@ router.post('/', async function(req, res, next) {
 
     try {
         // Appel à l'API pour rejoindre une partie
-        const response = await axios.post('http://localhost:3000/api/game/joinGame', {
+        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/joinGame`, {
             playerName,
             gameCode,
             playerId

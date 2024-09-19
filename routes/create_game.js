@@ -1,6 +1,12 @@
+require('dotenv').config();  // Charger les variables d'environnement depuis le fichier .env
+
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+
+// Récupérer les variables d'environnement pour l'IP du serveur et le port
+const SERVER_IP = process.env.SERVER_IP || 'localhost';
+const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
 
 /* GET create game page */
 router.get('/', async function(req, res) {
@@ -13,7 +19,7 @@ router.get('/', async function(req, res) {
 
     try {
         // Requête vers l'API pour obtenir la liste des joueurs
-        const response = await axios.get(`http://localhost:3000/api/game/getPlayers/${gameCode}`);
+        const response = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getPlayers/${gameCode}`);
         const players = response.data.players;
 
         // Rendre la vue `create_game` avec la liste des joueurs en plus des autres informations
@@ -31,7 +37,7 @@ router.post('/', async function(req, res, next) {
 
     try {
         // Appel à l'API pour créer une partie, en passant playerName et playerId (si existant)
-        const response = await axios.post('http://localhost:3000/api/game/createGame', {
+        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/createGame`, {
             playerName,
             playerId // Passer l'ID du joueur à l'API
         });
@@ -44,7 +50,7 @@ router.post('/', async function(req, res, next) {
         req.session.playerId = newPlayerId;
 
         // Requête vers l'API pour obtenir la liste des joueurs après la création de la partie
-        const playersResponse = await axios.get(`http://localhost:3000/api/game/getPlayers/${gameCode}`);
+        const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getPlayers/${gameCode}`);
         const players = playersResponse.data.players;
 
         // Sauvegarder la session avant de rediriger
@@ -65,7 +71,7 @@ router.post('/', async function(req, res, next) {
             req.session.playerName = playerName;
 
             // Requête vers l'API pour obtenir la liste des joueurs
-            const playersResponse = await axios.get(`http://localhost:3000/api/game/getPlayers/${existingGameCode}`);
+            const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getPlayers/${existingGameCode}`);
             const players = playersResponse.data.players;
 
             return req.session.save(() => {

@@ -13,6 +13,7 @@
     "connect-db": "file:../connect-db",
     "cookie-parser": "~1.4.4",
     "debug": "~4.3.0",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",

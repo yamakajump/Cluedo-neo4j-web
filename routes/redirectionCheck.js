@@ -1,4 +1,9 @@
+require('dotenv').config(); // Charger les variables d'environnement depuis le fichier .env
 const axios = require('axios');
+
+// Récupérer les variables d'environnement pour l'IP du serveur et le port
+const SERVER_IP = process.env.SERVER_IP || 'localhost';
+const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
 
 // Méthode pour vérifier l'état d'un joueur et rediriger en conséquence
 async function checkPlayerStatusAndRedirect(req, res) {
@@ -11,7 +16,7 @@ async function checkPlayerStatusAndRedirect(req, res) {
 
     try {
         // Appel à l'API pour vérifier le statut du joueur
-        const response = await axios.post('http://localhost:3000/api/verif/checkPlayerStatusAndRedirect', {
+        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/verif/checkPlayerStatusAndRedirect`, {
             playerId
         });
 
@@ -22,11 +27,11 @@ async function checkPlayerStatusAndRedirect(req, res) {
         if (redirection) {
             if (isOwner) {
                 // Si le joueur est propriétaire, rediriger vers la page de gestion de la partie
-                res.redirect(`/create_game`)
+                res.redirect(`/create_game`);
                 return true;
             } else {
                 // Sinon, rediriger vers la page pour rejoindre la partie
-                res.redirect(`/join_game`)
+                res.redirect(`/join_game`);
                 return true;
             }
         } else {
@@ -34,6 +39,7 @@ async function checkPlayerStatusAndRedirect(req, res) {
             return false;
         }
     } catch (error) {
+        console.error('Erreur lors de la vérification du statut du joueur :', error);
         return false;
     }
 }
