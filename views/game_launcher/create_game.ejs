@@ -66,10 +66,13 @@
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.gameCode === gameCode) {
-                console.log(data.message);  // Afficher un message lorsqu'un joueur rejoint
+                if (data.type === 'playerJoined' || data.type === 'playerLeft') {
+                    fetchPlayers();
+                }
 
-                // Mettre à jour la liste des joueurs
-                fetchPlayers();
+                if (data.type === 'deleteGame') {
+                    window.location.href = `/`;
+                }
             }
         };
 

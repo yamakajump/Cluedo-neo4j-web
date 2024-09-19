@@ -43,10 +43,10 @@ router.post('/', async function(req, res, next) {
         req.session.playerId = newPlayerId;
 
         // Envoyer une mise à jour via WebSocket à tous les clients
-        const broadcast = req.app.get('broadcast'); // Récupérer la fonction `broadcast` définie dans app.js
+        const broadcast = req.app.get('broadcast');
         broadcast(JSON.stringify({
-            gameCode: newGameCode,
-            message: `${playerName} a rejoint la partie.`
+            type: `playerJoined`,
+            gameCode: newGameCode
         }));
 
         // Sauvegarder la session avant de rediriger

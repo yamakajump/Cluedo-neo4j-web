@@ -18,6 +18,13 @@ router.delete('/delete/:gameCode', async (req, res) => {
             data: { playerId } // Passer l'ID du joueur dans la requête
         });
         res.status(200).json({ message: response.data.message });
+
+        // Envoyer une mise à jour via WebSocket à tous les clients
+        const broadcast = req.app.get('broadcast');
+        broadcast(JSON.stringify({
+            type: `deleteGame`,
+            gameCode: gameCode
+        }));
     } catch (error) {
         console.error('Erreur lors de la suppression de la partie :', error);
         res.status(500).json({ message: 'Erreur lors de la suppression de la partie.' });
@@ -34,6 +41,13 @@ router.post('/leave/:gameCode', async (req, res) => {
     try {
         const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/exitGame/leave/${gameCode}`, { playerId });
         res.status(200).json({ message: response.data.message });
+
+        // Envoyer une mise à jour via WebSocket à tous les clients
+        const broadcast = req.app.get('broadcast');
+        broadcast(JSON.stringify({
+            type: `playerLeft`,
+            gameCode: gameCode
+        }));
     } catch (error) {
         console.error('Erreur lors de la sortie de la partie :', error);
         res.status(500).json({ message: 'Erreur lors de la sortie de la partie.' });
