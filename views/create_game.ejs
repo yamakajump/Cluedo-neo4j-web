@@ -56,6 +56,31 @@
             }
         }
 
+        // WebSocket pour suivre les mises à jour des joueurs
+        const ws = new WebSocket('ws://localhost:3001');
+
+        ws.onopen = () => {
+            console.log('Connecté au serveur WebSocket');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.gameCode === gameCode) {
+                console.log(data.message);  // Afficher un message lorsqu'un joueur rejoint
+
+                // Mettre à jour la liste des joueurs
+                fetchPlayers();
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket :', error);
+        };
+
+        ws.onclose = () => {
+            console.log('Déconnecté du serveur WebSocket');
+        };
+
         // Rafraîchir la liste des joueurs
         async function fetchPlayers() {
             try {
@@ -72,8 +97,8 @@
                 console.error('Erreur lors de la récupération des joueurs :', error);
             }
         }
-        setInterval(fetchPlayers, 5000);
-        fetchPlayers();
+
+        fetchPlayers();  // Charger la liste des joueurs immédiatement
     </script>
 </body>
 </html>

@@ -38,10 +38,10 @@
             const confirmed = confirm('Voulez-vous vraiment quitter la partie ?');
             if (confirmed) {
                 try {
-                    const response = await fetch(`/exit_game/leave/${gameCode}`, { method: 'POST' });  // Utilisation du back-end pour quitter
+                    const response = await fetch(`/exit_game/leave/${gameCode}`, { method: 'POST' });
                     if (response.ok) {
                         alert('Vous avez quitté la partie.');
-                        window.location.href = '/'; // Rediriger vers la page principale
+                        window.location.href = '/';
                     } else {
                         alert('Erreur lors de la sortie de la partie.');
                     }
@@ -51,7 +51,32 @@
             }
         }
 
-        // Rafraîchir la liste des joueurs toutes les 5 secondes
+        // Utiliser WebSocket pour obtenir les mises à jour en temps réel
+        const ws = new WebSocket('ws://localhost:3001');
+
+        ws.onopen = () => {
+            console.log('Connecté au serveur WebSocket');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.gameCode === gameCode) {
+                console.log(data.message);  // Afficher un message lorsqu'un joueur rejoint
+
+                // Mettre à jour la liste des joueurs
+                fetchPlayers();
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket :', error);
+        };
+
+        ws.onclose = () => {
+            console.log('Déconnecté du serveur WebSocket');
+        };
+
+        // Fonction pour récupérer la liste des joueurs à la demande
         async function fetchPlayers() {
             try {
                 const response = await fetch(`/api/game/getPlayers/${gameCode}`);
@@ -76,8 +101,8 @@
             }
         }
 
-        setInterval(fetchPlayers, 5000);  // Rafraîchir la liste toutes les 5 secondes
-        fetchPlayers();  // Appeler une première fois la fonction pour charger les joueurs immédiatement
+        // Charger la liste des joueurs immédiatement
+        fetchPlayers();
     </script>
 </body>
 </html>

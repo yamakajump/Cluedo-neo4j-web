@@ -9,15 +9,12 @@ async function checkPlayerStatusAndRedirect(req, res) {
         return false;
     }
 
-    console.log('Vérification du joueur avec l\'ID :', playerId);
-
     try {
         // Appel à l'API pour vérifier le statut du joueur
         const response = await axios.post('http://localhost:3000/api/verif/checkPlayerStatusAndRedirect', {
             playerId
         });
 
-        console.log('Réponse de l\'API de vérification du joueur :', response.data);
         const { redirection, gameCode, isOwner } = response.data;
 
         req.session.gameCode = gameCode;
@@ -37,8 +34,6 @@ async function checkPlayerStatusAndRedirect(req, res) {
             return false;
         }
     } catch (error) {
-        console.error('Erreur lors de l\'appel à l\'API de vérification du joueur :', error);
-        // Rediriger vers la page principale en cas d'erreur
         return false;
     }
 }
