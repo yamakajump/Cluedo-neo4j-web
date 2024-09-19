@@ -15,6 +15,7 @@ var create_gameRouter = require('./routes/create_game');
 var join_gameRouter = require('./routes/join_game');
 var chooseRouter = require('./routes/choose');  
 var exitGameRouter = require('./routes/exit_game');
+var startGameRouter = require('./routes/start_game');
 
 // Import des routes de l'API
 var adminApiRouter = require('./routes/api/admin'); 
@@ -71,6 +72,7 @@ app.use('/choose', chooseRouter);
 app.use('/create_game', create_gameRouter);
 app.use('/join_game', join_gameRouter);
 app.use('/exit_game', exitGameRouter);
+app.use('/start_game', startGameRouter);
 
 // Routes pour l'API
 app.use('/api/admin', adminApiRouter); 
