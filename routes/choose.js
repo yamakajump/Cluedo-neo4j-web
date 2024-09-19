@@ -11,7 +11,7 @@ router.get('/', async function(req, res, next) {
   if (wasRedirected) return;
 
   // Sinon, rendre la page index
-  res.render('choose');
+  res.render('game_launcher/choose');
 });
 
 module.exports = router;

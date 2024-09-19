@@ -17,7 +17,7 @@ router.get('/', function(req, res) {
     }
 
     // Rendre la vue `join_game` avec les informations du jeu
-    res.render('join_game', { gameCode, playerName });
+    res.render('game_launcher/join_game', { gameCode, playerName });
 });
 
 /* POST request to join game */

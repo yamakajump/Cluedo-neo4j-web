@@ -23,7 +23,7 @@ router.get('/', async function(req, res) {
         const players = response.data.players;
 
         // Rendre la vue `create_game` avec la liste des joueurs en plus des autres informations
-        res.render('create_game', { gameCode, playerName, players });
+        res.render('game_launcher/create_game', { gameCode, playerName, players });
     } catch (error) {
         console.error('Erreur lors de la récupération des joueurs:', error);
         res.status(500).render('error', { message: 'Erreur lors de la récupération des joueurs.' });
@@ -58,7 +58,7 @@ router.post('/', async function(req, res, next) {
             // Assure-toi que `res.render` est appelé une seule fois
             if (!res.headersSent) {
                 // Rediriger vers la page de gestion de la partie avec la liste des joueurs
-                res.render('create_game', { gameCode, playerName, players });
+                res.render('game_launcher/create_game', { gameCode, playerName, players });
             }
         });
     } catch (error) {
@@ -76,7 +76,7 @@ router.post('/', async function(req, res, next) {
 
             return req.session.save(() => {
                 // Rediriger vers la page de la partie en cours avec la liste des joueurs
-                res.render('create_game', { gameCode: existingGameCode, playerName, players });
+                res.render('game_launcher/create_game', { gameCode: existingGameCode, playerName, players });
             });
         }
 
