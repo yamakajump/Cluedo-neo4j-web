@@ -30,12 +30,13 @@ router.post('/', async (req, res) => {
 
         // Créer la partie et associer le joueur avec un identifiant unique
         await session.run(
-            `CREATE (p:Partie {code: $gameCode, started: $start})
+            `CREATE (p:Partie {code: $gameCode, started: false})
              MERGE (j:Joueur {id: $playerId, name: $playerName})
              SET j.owner = true
              MERGE (j)-[:JOUE_DANS]->(p)`,
-            { gameCode, start: false, playerId, playerName }
+            { gameCode, playerId, playerName }
         );
+        
 
         // Répondre avec les informations du jeu et du joueur (y compris l'ID du joueur)
         res.json({ gameCode, playerId });

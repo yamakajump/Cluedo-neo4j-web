@@ -5,7 +5,7 @@ const driver = require('../../../initializeNeo4j');  // Connexion à Neo4j
 // Démarrer la partie (uniquement pour le propriétaire)
 router.post('/', async (req, res) => {
     const session = driver.session();
-    const { gameCode, playerId } = req.body;  // Utilisation de playerId et gameCode
+    const { gameCode, playerId } = req.body;
 
     try {
         // Vérifier si la partie existe
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ message: 'Partie non trouvée.' });
         }
 
-        // Vérifier si le joueur existe et fait partie de la partie
+        // Vérifier si le joueur est dans la partie et s'il est le propriétaire
         const playerResult = await session.run(
             `MATCH (j:Joueur {id: $playerId})-[:JOUE_DANS]->(p:Partie {code: $gameCode})
              RETURN j.owner AS owner`,
@@ -30,7 +30,6 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ message: 'Joueur non trouvé dans cette partie.' });
         }
 
-        // Vérifier si le joueur est le propriétaire de la partie
         const isOwner = playerResult.records[0].get('owner');
         if (!isOwner) {
             return res.status(403).json({ message: 'Seul le propriétaire peut démarrer la partie.' });
@@ -43,7 +42,8 @@ router.post('/', async (req, res) => {
             { gameCode }
         );
 
-        res.json({ message: 'La partie a démarré avec succès.' });
+        // Assure-toi de renvoyer le statut de la partie après l'avoir démarrée
+        res.json({ message: 'La partie a démarré avec succès.', started: true });
     } catch (error) {
         console.error('Erreur lors du démarrage de la partie :', error);
         res.status(500).json({ message: 'Erreur lors du démarrage de la partie.' });
