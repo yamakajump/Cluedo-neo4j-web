@@ -86,11 +86,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Importer les routes front-end
 app.use('/', require('./routes/index'));
-app.use('/choose', require('./routes/choose'));
-app.use('/create_game', require('./routes/create_game'));
-app.use('/join_game', require('./routes/join_game'));
-app.use('/exit_game', require('./routes/exit_game'));
-app.use('/start_game', require('./routes/start_game'));
+app.use('/choose', require('./routes/game_launcher/choose'));
+app.use('/create_game', require('./routes/game_launcher/create_game'));
+app.use('/join_game', require('./routes/game_launcher/join_game'));
+app.use('/exit_game', require('./routes/game_launcher/exit_game'));
+app.use('/start_game', require('./routes/game_launcher/start_game'));
 
 // Importer les routes de l'API
 app.use('/api/admin', require('./api/admin'));

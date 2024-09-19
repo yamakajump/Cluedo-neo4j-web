@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { checkPlayerStatusAndRedirect } = require('./redirectionCheck');  // Importer la méthode
+const { checkPlayerStatusAndRedirect } = require('../redirectionCheck');  // Importer la méthode
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
