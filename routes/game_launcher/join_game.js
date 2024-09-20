@@ -37,28 +37,36 @@ router.post('/', async function(req, res, next) {
         // Récupérer les informations de la réponse
         const { playerId: newPlayerId, newGameCode, isOwner } = response.data;
 
-        // Stocker les informations dans la session
-        req.session.gameCode = newGameCode;
-        req.session.playerName = playerName;
-        req.session.playerId = newPlayerId;
+        if (response.data.successJoin === true) {
+            // Stocker les informations dans la session
+            req.session.gameCode = newGameCode;
+            req.session.playerName = playerName;
+            req.session.playerId = newPlayerId;
+            
+            // Envoyer une mise à jour via WebSocket à tous les clients
+            const broadcast = req.app.get('broadcast');
+            broadcast(JSON.stringify({
+                type: `playerJoined`,
+                gameCode: newGameCode
+            }));
+        
+            // Sauvegarder la session avant de rediriger
+            req.session.save(() => {
+                if (isOwner) {
+                    // Si le joueur est propriétaire, rediriger vers la page de gestion de la partie
+                    res.redirect(`/create_game`);
+                } else {
+                    // Sinon, rediriger vers la page pour rejoindre la partie
+                    res.redirect(`/join_game`);
+                }
+            });
+        }
 
-        // Envoyer une mise à jour via WebSocket à tous les clients
-        const broadcast = req.app.get('broadcast');
-        broadcast(JSON.stringify({
-            type: `playerJoined`,
-            gameCode: newGameCode
-        }));
+        else {
+            // Si la réponse n'est pas un succès, afficher le message d'erreur
+            res.render('game_launcher/choose', { gameCode, playerName, errorMessage: response.data.message });
+        }
 
-        // Sauvegarder la session avant de rediriger
-        req.session.save(() => {
-            if (isOwner) {
-                // Si le joueur est propriétaire, rediriger vers la page de gestion de la partie
-                res.redirect(`/create_game`);
-            } else {
-                // Sinon, rediriger vers la page pour rejoindre la partie
-                res.redirect(`/join_game`);
-            }
-        });
     } catch (error) {
         // Vérifier si l'erreur est due à la non-existence de la partie
         if (error.response && error.response.status === 404) {

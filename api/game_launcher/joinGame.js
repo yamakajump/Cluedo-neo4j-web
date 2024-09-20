@@ -21,8 +21,9 @@ router.post('/', async (req, res) => {
             const existingGameCode = playerInGameResult.records[0].get('existingGameCode');
             const isOwner = playerInGameResult.records[0].get('isOwner');
 
-            return res.status(200).json({
+            return res.json({
                 message: 'Vous êtes déjà dans une partie.',
+                successJoin: true,
                 newGameCode: existingGameCode,
                 playerId,
                 isOwner
@@ -37,7 +38,11 @@ router.post('/', async (req, res) => {
         );
 
         if (gameResult.records.length === 0) {
-            return res.status(404).json({ message: 'Partie introuvable.', gameCode });
+            return res.json({
+                message: 'Partie introuvable.',
+                successJoin: false,
+                gameCode
+            });
         }
 
         // 3. Vérifier combien de joueurs sont déjà dans la partie
@@ -50,10 +55,30 @@ router.post('/', async (req, res) => {
         const playerCount = playerCountResult.records[0].get('playerCount').low;  // Obtenir le nombre de joueurs (Neo4j retourne un entier Long)
 
         if (playerCount >= 8) {
-            return res.status(400).json({ message: 'La partie est déjà pleine (8 joueurs).', gameCode });
+            return res.json({
+                message: 'La partie est déjà pleine (8 joueurs).',
+                successJoin: false,
+                gameCode
+            });
         }
 
-        // 4. Vérifier si l'ID du joueur existe déjà, mais avec un nom différent
+        // 4. Vérifier si un autre joueur avec le même nom existe déjà dans la partie
+        const playerNameExists = await session.run(
+            `MATCH (p:Partie {code: $gameCode})<-[:JOUE_DANS]-(j:Joueur {name: $playerName})
+             RETURN j`,
+            { gameCode, playerName }
+        );
+
+        if (playerNameExists.records.length > 0) {
+            // Si un joueur avec le même nom existe déjà dans la partie, renvoyer un message d'erreur
+            return res.json({
+                message: 'Ce nom est déjà utilisé par un autre joueur dans cette partie.',
+                successJoin: false,
+                gameCode
+            });
+        }
+
+        // 5. Vérifier si l'ID du joueur existe déjà, mais avec un nom différent
         const playerExists = await session.run(
             `MATCH (j:Joueur {id: $playerId})
              RETURN j.name AS existingName`,
@@ -72,7 +97,7 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // 5. Ajouter le joueur à la partie
+        // 6. Ajouter le joueur à la partie
         await session.run(
             `MERGE (j:Joueur {id: $playerId, name: $playerName})
              SET j.owner = false
@@ -81,16 +106,21 @@ router.post('/', async (req, res) => {
             { playerId, playerName, gameCode }
         );
 
-        // 6. Retourner les informations du joueur et de la partie
-        res.status(200).json({
+        // 7. Retourner les informations du joueur et de la partie
+        return res.json({
             message: 'Joueur ajouté avec succès.',
+            successJoin: true,
             newGameCode: gameCode,
             playerId,
             isOwner: false
         });
     } catch (error) {
         console.error('Erreur lors de la jonction à la partie :', error);
-        res.status(500).json({ message: 'Erreur lors de la jonction à la partie.', gameCode });
+        return res.json({
+            message: 'Erreur lors de la jonction à la partie.',
+            successJoin: false,
+            gameCode
+        });
     } finally {
         await session.close();
     }
