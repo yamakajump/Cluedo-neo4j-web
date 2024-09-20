@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
         // Si le joueur n'est dans aucune partie, retourner qu'il n'a pas de partie en cours
         return res.status(200).json({
             message: 'Joueur trouvé, mais aucune partie en cours.',
-            redirection: tfalserue,
+            redirection: false,
             gameCode: null,
             playerId,
             isOwner: null
