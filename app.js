@@ -96,12 +96,12 @@ app.use('/game', require('./routes/game/game'));
 
 // Importer les routes de l'API
 app.use('/api/admin', require('./api/admin'));
-app.use('/api/game/checkGameStatus', require('./api/game/checkGameStatus'));
-app.use('/api/game/createGame', require('./api/game/createGame'));
-app.use('/api/game/exitGame', require('./api/game/exitGame'));
-app.use('/api/game/getPlayers', require('./api/game/getPlayers'));
-app.use('/api/game/joinGame', require('./api/game/joinGame'));
-app.use('/api/game/startGame', require('./api/game/startGame'));
+app.use('/api/game/createGame', require('./api/game_launcher/createGame'));
+app.use('/api/game/exitGame', require('./api/game_launcher/exitGame'));
+app.use('/api/game/getPlayers', require('./api/game_launcher/getPlayers'));
+app.use('/api/game/joinGame', require('./api/game_launcher/joinGame'));
+app.use('/api/game/startGame', require('./api/game_launcher/startGame'));
+
 app.use('/api/verif/checkPlayerStatusAndRedirect', require('./api/verif/checkPlayerStatusAndRedirect'));
 
 // Gestion des erreurs 404 et des autres erreurs
