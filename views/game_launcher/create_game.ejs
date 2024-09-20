@@ -12,11 +12,19 @@
             <h2>Partie Créée</h2>
             <p>Votre code de partie : <strong id="gameCode"><%= gameCode %></strong></p>
             <p>Créateur : <strong id="playerName"><%= playerName %></strong></p>
+
+            <!-- Afficher un message d'erreur si `errorMessage` est défini -->
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <div class="error-message">
+                    <p style="color: red;"><%= errorMessage %></p>
+                </div>
+            <% } %>
+
             <button class="button" onclick="copyCode()">Copier le code</button>
             <button class="button" onclick="window.location.href = '/start_game/<%= gameCode %>'">Démarrer la partie</button>
             <button class="button" onclick="deleteGame()">Supprimer la partie</button>
 
-            <h3>Joueurs dans la partie : <span id="playerCount"></span>/8</h3> <!-- Ajout du compteur ici -->
+            <h3>Joueurs dans la partie : <span id="playerCount"></span>/8</h3>
             <ul id="playersList">
                 <% players.forEach(function(player) { %>
                     <li><%= player %></li>
@@ -38,7 +46,7 @@
             });
         }
 
-        // Fonction pour supprimer la partie (seulement par le propriétaire)
+        // Fonction pour supprimer la partie
         async function deleteGame() {
             const confirmed = confirm('Voulez-vous vraiment supprimer la partie ?');
             if (confirmed) {
@@ -101,7 +109,7 @@
 
                 // Mettre à jour le compteur
                 const playerCount = document.getElementById('playerCount');
-                playerCount.textContent = data.players.length;  // Mettre à jour le nombre de joueurs
+                playerCount.textContent = data.players.length;
             } catch (error) {
                 console.error('Erreur lors de la récupération des joueurs :', error);
             }

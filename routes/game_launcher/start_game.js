@@ -11,9 +11,18 @@ const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
 router.get('/:gameCode', async (req, res) => {
     const { gameCode } = req.params;
     const playerId = req.session.playerId;
+    const { playerName } = req.session;  // Récupérer les informations depuis la session
+
+    if (!gameCode || !playerName) {
+        // Si le gameCode ou playerName n'est pas défini, rediriger vers la page principale
+        return res.redirect('/');
+    }
+
+    // Requête vers l'API pour obtenir la liste des joueurs
+    const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getPlayers/${gameCode}`);
+    const players = playersResponse.data.players;
 
     try {
-        // Utilisation des variables d'environnement pour l'URL de l'API
         const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/startGame`, {
             gameCode,
             playerId
@@ -21,14 +30,15 @@ router.get('/:gameCode', async (req, res) => {
         const gameStatus = response.data;
 
         if (gameStatus.started) {
-            //TODO 
-            // res.render('game/game', { gameCode, playerId });
+            // Si la partie a démarré, rediriger vers la vue de la partie
+            res.render('game/game', { gameCode, playerId });
         } else {
-            res.status(400).send('La partie n\'a pas encore démarré.');
+            // Si la partie n'a pas démarré, afficher le message dans une vue avec le message d'erreur
+            res.render('game_launcher/create_game', { gameCode, playerName, players, errorMessage: gameStatus.message });
         }
     } catch (error) {
         console.error('Erreur lors de la récupération du statut de la partie :', error);
-        res.status(500).send('Erreur lors de la récupération du statut de la partie.');
+        res.render('game_launcher/create_game', { gameCode, playerName, players, errorMessage: 'Erreur lors de la récupération du statut de la partie.' });
     }
 });
 

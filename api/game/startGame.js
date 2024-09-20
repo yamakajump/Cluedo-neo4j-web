@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
         );
 
         if (gameResult.records.length === 0) {
-            return res.status(404).json({ message: 'Partie non trouvée.' });
+            return res.json({ message: 'Partie non trouvée.', started: false });
         }
 
         // Vérifier si le joueur est dans la partie et s'il est le propriétaire
@@ -28,12 +28,12 @@ router.post('/', async (req, res) => {
         );
 
         if (playerResult.records.length === 0) {
-            return res.status(404).json({ message: 'Joueur non trouvé dans cette partie.' });
+            return res.json({ message: 'Joueur non trouvé dans cette partie.', started: false });
         }
 
         const isOwner = playerResult.records[0].get('owner');
         if (!isOwner) {
-            return res.status(403).json({ message: 'Seul le propriétaire peut démarrer la partie.' });
+            return res.json({ message: 'Seul le propriétaire peut démarrer la partie.', started: false });
         }
 
         // Vérifier le nombre de joueurs dans la partie
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
         const playerCount = playersCountResult.records[0].get('playerCount').low;
 
         if (playerCount < 2 || playerCount > 8) {
-            return res.status(400).json({ message: 'La partie ne peut être lancée qu\'avec un minimum de 2 joueurs et un maximum de 8 joueurs.' });
+            return res.json({ message: 'La partie ne peut être lancée qu\'avec un minimum de 2 joueurs et un maximum de 8 joueurs.', started: false });
         }
 
         // Récupérer les armes, profs (personnages) et salles
@@ -82,7 +82,7 @@ router.post('/', async (req, res) => {
         } catch (err) {
             console.error('Erreur lors de l\'initialisation des éléments :', err);
             await transaction.rollback();
-            return res.status(500).json({ message: 'Erreur lors de l\'initialisation des éléments.' });
+            return res.json({ message: 'Erreur lors de l\'initialisation des éléments.', started: false });
         }
 
         // Étape 2 : Créer les relations entre les salles
@@ -113,7 +113,7 @@ router.post('/', async (req, res) => {
         } catch (err) {
             console.error('Erreur lors de la création des relations entre salles :', err);
             await relationTransaction.rollback();
-            return res.status(500).json({ message: 'Erreur lors de la création des relations entre salles.' });
+            return res.json({ message: 'Erreur lors de la création des relations entre salles.', started: false });
         }
 
         // Étape 3 : Sélectionner une solution de crime
@@ -133,7 +133,7 @@ router.post('/', async (req, res) => {
         } catch (err) {
             console.error('Erreur lors de la création de la solution de crime :', err);
             await solutionTransaction.rollback();
-            return res.status(500).json({ message: 'Erreur lors de la création de la solution de crime.' });
+            return res.json({ message: 'Erreur lors de la création de la solution de crime.', started: false });
         }
 
         // Étape 4 : Distribuer les cartes aux joueurs
@@ -166,7 +166,7 @@ router.post('/', async (req, res) => {
         } catch (err) {
             console.error('Erreur lors de la distribution des cartes :', err);
             await cardTransaction.rollback();
-            return res.status(500).json({ message: 'Erreur lors de la distribution des cartes.' });
+            return res.json({ message: 'Erreur lors de la distribution des cartes.', started: false });
         }
 
         // Démarrer la partie
@@ -179,7 +179,7 @@ router.post('/', async (req, res) => {
         res.json({ message: 'La partie a démarré avec succès.', started: true });
     } catch (error) {
         console.error('Erreur lors du démarrage de la partie :', error);
-        res.status(500).json({ message: 'Erreur lors du démarrage de la partie.' });
+        res.json({ message: 'Erreur lors du démarrage de la partie.', started: false });
     } finally {
         await session.close();
     }
