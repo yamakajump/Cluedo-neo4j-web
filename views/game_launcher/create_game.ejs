@@ -16,7 +16,7 @@
             <button class="button" onclick="window.location.href = '/start_game/<%= gameCode %>'">Démarrer la partie</button>
             <button class="button" onclick="deleteGame()">Supprimer la partie</button>
 
-            <h3>Joueurs dans la partie :</h3>
+            <h3>Joueurs dans la partie : <span id="playerCount"></span>/8</h3> <!-- Ajout du compteur ici -->
             <ul id="playersList">
                 <% players.forEach(function(player) { %>
                     <li><%= player %></li>
@@ -84,11 +84,13 @@
             console.log('Déconnecté du serveur WebSocket');
         };
 
-        // Rafraîchir la liste des joueurs
+        // Rafraîchir la liste des joueurs et le compteur
         async function fetchPlayers() {
             try {
                 const response = await fetch(`/api/game/getPlayers/${gameCode}`);
                 const data = await response.json();
+                
+                // Mettre à jour la liste des joueurs
                 const playersList = document.getElementById('playersList');
                 playersList.innerHTML = '';
                 data.players.forEach(player => {
@@ -96,12 +98,16 @@
                     li.textContent = player;
                     playersList.appendChild(li);
                 });
+
+                // Mettre à jour le compteur
+                const playerCount = document.getElementById('playerCount');
+                playerCount.textContent = data.players.length;  // Mettre à jour le nombre de joueurs
             } catch (error) {
                 console.error('Erreur lors de la récupération des joueurs :', error);
             }
         }
 
-        fetchPlayers();  // Charger la liste des joueurs immédiatement
+        fetchPlayers();  // Charger la liste des joueurs et le compteur immédiatement
     </script>
 </body>
 </html>

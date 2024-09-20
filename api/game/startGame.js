@@ -36,6 +36,19 @@ router.post('/', async (req, res) => {
             return res.status(403).json({ message: 'Seul le propriétaire peut démarrer la partie.' });
         }
 
+        // Vérifier le nombre de joueurs dans la partie
+        const playersCountResult = await session.run(
+            `MATCH (p:Partie {code: $gameCode})<-[:JOUE_DANS]-(j:Joueur)
+             RETURN COUNT(j) AS playerCount`,
+            { gameCode }
+        );
+
+        const playerCount = playersCountResult.records[0].get('playerCount').low;
+
+        if (playerCount < 2 || playerCount > 8) {
+            return res.status(400).json({ message: 'La partie ne peut être lancée qu\'avec un minimum de 2 joueurs et un maximum de 8 joueurs.' });
+        }
+
         // Récupérer les armes, profs (personnages) et salles
         const weapons = getWeapons().map(w => w.name);
         const profs = getProfs().map(p => p.name);

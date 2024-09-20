@@ -40,7 +40,20 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ message: 'Partie introuvable.', gameCode });
         }
 
-        // 3. Ajouter le joueur à la partie
+        // 3. Vérifier combien de joueurs sont déjà dans la partie
+        const playerCountResult = await session.run(
+            `MATCH (p:Partie {code: $gameCode})<-[:JOUE_DANS]-(j:Joueur)
+             RETURN COUNT(j) AS playerCount`,
+            { gameCode }
+        );
+
+        const playerCount = playerCountResult.records[0].get('playerCount').low;  // Obtenir le nombre de joueurs (Neo4j retourne un entier Long)
+
+        if (playerCount >= 8) {
+            return res.status(400).json({ message: 'La partie est déjà pleine (8 joueurs).', gameCode });
+        }
+
+        // 4. Ajouter le joueur à la partie
         await session.run(
             `MERGE (j:Joueur {id: $playerId, name: $playerName})
              SET j.owner = false
@@ -49,7 +62,7 @@ router.post('/', async (req, res) => {
             { playerId, playerName, gameCode }
         );
 
-        // 4. Retourner les informations du joueur et de la partie
+        // 5. Retourner les informations du joueur et de la partie
         res.status(200).json({
             message: 'Joueur ajouté avec succès.',
             newGameCode: gameCode,
