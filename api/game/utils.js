@@ -11,6 +11,28 @@ function generatePlayerId() {
     return uuidv4(); // Générer un UUID pour chaque joueur
 }
 
+// Fonction utilitaire pour mélanger les éléments
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Fonction pour sélectionner un élément aléatoire dans une liste
+function chooseRandom(array) {
+    const index = Math.floor(Math.random() * array.length);
+    return array[index];
+}
+
+// Fonction pour retirer un élément d'une liste
+function removeElement(array, element) {
+    const index = array.indexOf(element);
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+}
+
 // Fonction pour récupérer les armes du jeu avec leurs images
 function getWeapons() {
     const weapons = [
@@ -57,4 +79,4 @@ function getRooms() {
     return rooms;
 }
 
-module.exports = { generateGameCode, generatePlayerId, getWeapons, getProfs, getRooms };
+module.exports = { generateGameCode, generatePlayerId, getWeapons, getProfs, getRooms, shuffleArray, chooseRandom, removeElement };
