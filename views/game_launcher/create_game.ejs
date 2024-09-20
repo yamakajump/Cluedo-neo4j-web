@@ -99,7 +99,7 @@
         // Rafraîchir la liste des joueurs et le compteur
         async function fetchPlayers() {
             try {
-                const response = await fetch(`/api/game/getPlayers/${gameCode}`);
+                const response = await fetch(`/api/game_launcher/getPlayers/${gameCode}`);
                 const data = await response.json();
                 
                 // Mettre à jour la liste des joueurs

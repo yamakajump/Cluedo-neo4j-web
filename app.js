@@ -96,13 +96,25 @@ app.use('/game', require('./routes/game/game'));
 
 // Importer les routes de l'API
 app.use('/api/admin', require('./api/admin'));
-app.use('/api/game/createGame', require('./api/game_launcher/createGame'));
-app.use('/api/game/exitGame', require('./api/game_launcher/exitGame'));
-app.use('/api/game/getPlayers', require('./api/game_launcher/getPlayers'));
-app.use('/api/game/joinGame', require('./api/game_launcher/joinGame'));
-app.use('/api/game/startGame', require('./api/game_launcher/startGame'));
 
 app.use('/api/verif/checkPlayerStatusAndRedirect', require('./api/verif/checkPlayerStatusAndRedirect'));
+
+// API pour la gestion des parties
+app.use('/api/game_launcher/createGame', require('./api/game_launcher/createGame'));
+app.use('/api/game_launcher/exitGame', require('./api/game_launcher/exitGame'));
+app.use('/api/game_launcher/getPlayers', require('./api/game_launcher/getPlayers'));
+app.use('/api/game_launcher/joinGame', require('./api/game_launcher/joinGame'));
+app.use('/api/game_launcher/startGame', require('./api/game_launcher/startGame'));
+
+// API pour la gestion du jeu
+app.use('/api/game/check/check-status', require('./api/game/check/check-status'));
+app.use('/api/game/check/check-turn', require('./api/game/check/check-turn'));
+app.use('/api/game/check/hypothesis-status', require('./api/game/check/hypothesis-status'));
+
+app.use('/api/game/initialize/choose-character', require('./api/game/initialize/choose-character'));
+
+app.use('/api/game/initialize/end-turn', require('./api/game/end-turn'));
+app.use('/api/game/initialize/make-hypothesis', require('./api/game/make-hypothesis'));
 
 // Gestion des erreurs 404 et des autres erreurs
 app.use(function(req, res, next) {

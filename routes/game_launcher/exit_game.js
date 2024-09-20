@@ -14,7 +14,7 @@ router.delete('/delete/:gameCode', async (req, res) => {
     const playerId = req.session.playerId; // Récupérer l'ID du joueur depuis la session
 
     try {
-        const response = await axios.delete(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/exitGame/delete/${gameCode}`, {
+        const response = await axios.delete(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game_launcher/exitGame/delete/${gameCode}`, {
             data: { playerId } // Passer l'ID du joueur dans la requête
         });
         res.status(200).json({ message: response.data.message });
@@ -39,7 +39,7 @@ router.post('/leave/:gameCode', async (req, res) => {
     console.log('playerId:', playerId);
 
     try {
-        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/exitGame/leave/${gameCode}`, { playerId });
+        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game_launcher/exitGame/leave/${gameCode}`, { playerId });
         res.status(200).json({ message: response.data.message });
 
         // Envoyer une mise à jour via WebSocket à tous les clients

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const driver = require('../../initializeNeo4j');  // Connexion à Neo4j
-const { getWeapons, getProfs, getRooms, shuffleArray, chooseRandom, removeElement } = require('./utils');
+const { getWeapons, getProfs, getRooms, shuffleArray, chooseRandom, removeElement } = require('../utils');
 
 // Démarrer la partie (uniquement pour le propriétaire)
 router.post('/', async (req, res) => {

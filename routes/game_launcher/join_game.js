@@ -28,7 +28,7 @@ router.post('/', async function(req, res, next) {
 
     try {
         // Appel à l'API pour rejoindre une partie
-        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/joinGame`, {
+        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game_launcher/joinGame`, {
             playerName,
             gameCode,
             playerId

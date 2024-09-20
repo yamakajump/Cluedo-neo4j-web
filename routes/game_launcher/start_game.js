@@ -19,11 +19,11 @@ router.get('/:gameCode', async (req, res) => {
     }
 
     // Requête vers l'API pour obtenir la liste des joueurs
-    const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getPlayers/${gameCode}`);
+    const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game_launcher/getPlayers/${gameCode}`);
     const players = playersResponse.data.players;
 
     try {
-        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/startGame`, {
+        const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game_launcher/startGame`, {
             gameCode,
             playerId
         });
