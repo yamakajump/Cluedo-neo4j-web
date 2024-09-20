@@ -139,11 +139,11 @@ router.post('/', async (req, res) => {
         // Étape 4 : Distribuer les cartes aux joueurs
         const playersResult = await session.run(
             `MATCH (j:Joueur)-[:JOUE_DANS]->(p:Partie {code: $gameCode})
-             RETURN j.name AS playerName`,
+             RETURN j.id AS playerId`,  // Utiliser l'ID du joueur
             { gameCode }
         );
 
-        const players = playersResult.records.map(record => record.get('playerName'));
+        const players = playersResult.records.map(record => record.get('playerId'));  // Récupérer les IDs des joueurs
         let allElements = [...profs, ...weapons, ...rooms];
         removeElement(allElements, murderer);
         removeElement(allElements, weapon);
@@ -154,11 +154,11 @@ router.post('/', async (req, res) => {
         try {
             let currentPlayerIndex = 0;
             for (let element of allElements) {
-                const player = players[currentPlayerIndex];
+                const playerId = players[currentPlayerIndex];
                 await cardTransaction.run(
-                    `MATCH (j:Joueur {name: $playerName}), (e {name: $element})
+                    `MATCH (j:Joueur {id: $playerId}), (e {name: $element})
                      CREATE (j)-[:POSSEDE]->(e)`,
-                    { playerName: player, element }
+                    { playerId, element }
                 );
                 currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
             }

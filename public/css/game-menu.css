@@ -97,3 +97,19 @@ input[type="text"]:focus {
         width: 100%; /* Les boutons prennent toute la largeur sur mobile */
     }
 }
+
+/* Ajout d'un style pour le message d'erreur */
+.error-message {
+    color: #e74c3c; /* Rouge plus doux */
+    background-color: rgba(231, 76, 60, 0.1); /* Légère teinte rouge derrière */
+    border: 1px solid #e74c3c; /* Bordure assortie */
+    border-radius: 8px; /* Coins arrondis */
+    padding: 10px; /* Espacement autour du texte */
+    margin-top: 15px; /* Espacement par rapport au contenu précédent */
+    text-align: center; /* Centrer le texte */
+    font-size: 16px; /* Augmenter légèrement la taille du texte */
+    font-weight: bold; /* Texte en gras */
+    width: fit-content; /* Adapter la largeur au contenu */
+    max-width: 90%; /* Limite la largeur pour les longs messages */
+}
+
