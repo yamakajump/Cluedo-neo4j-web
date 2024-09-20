@@ -53,7 +53,26 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: 'La partie est déjà pleine (8 joueurs).', gameCode });
         }
 
-        // 4. Ajouter le joueur à la partie
+        // 4. Vérifier si l'ID du joueur existe déjà, mais avec un nom différent
+        const playerExists = await session.run(
+            `MATCH (j:Joueur {id: $playerId})
+             RETURN j.name AS existingName`,
+            { playerId }
+        );
+
+        if (playerExists.records.length > 0) {
+            const existingName = playerExists.records[0].get('existingName');
+            if (existingName !== playerName) {
+                // Mettre à jour le nom du joueur s'il est différent
+                await session.run(
+                    `MATCH (j:Joueur {id: $playerId})
+                     SET j.name = $playerName`,
+                    { playerId, playerName }
+                );
+            }
+        }
+
+        // 5. Ajouter le joueur à la partie
         await session.run(
             `MERGE (j:Joueur {id: $playerId, name: $playerName})
              SET j.owner = false
@@ -62,7 +81,7 @@ router.post('/', async (req, res) => {
             { playerId, playerName, gameCode }
         );
 
-        // 5. Retourner les informations du joueur et de la partie
+        // 6. Retourner les informations du joueur et de la partie
         res.status(200).json({
             message: 'Joueur ajouté avec succès.',
             newGameCode: gameCode,

@@ -28,16 +28,34 @@ router.post('/', async (req, res) => {
             });
         }
 
+        // Vérifier si l'ID du joueur existe déjà, mais avec un nom différent
+        const playerExists = await session.run(
+            `MATCH (j:Joueur {id: $playerId})
+             RETURN j.name AS existingName`,
+            { playerId }
+        );
+
+        if (playerExists.records.length > 0) {
+            const existingName = playerExists.records[0].get('existingName');
+            if (existingName !== playerName) {
+                // Mettre à jour le nom du joueur s'il est différent
+                await session.run(
+                    `MATCH (j:Joueur {id: $playerId})
+                     SET j.name = $playerName`,
+                    { playerId, playerName }
+                );
+            }
+        }
+
         // Créer la partie et associer le joueur avec un identifiant unique
         await session.run(
-            `CREATE (p:Partie {code: $gameCode, started: false})
+            `CREATE (p:Partie {code: $gameCode, started: false, createdAt: $createdAt})
              MERGE (j:Joueur {id: $playerId, name: $playerName})
              SET j.owner = true
              MERGE (j)-[:JOUE_DANS]->(p)`,
-            { gameCode, playerId, playerName }
+            { gameCode, playerId, playerName, createdAt }
         );
         
-
         // Répondre avec les informations du jeu et du joueur (y compris l'ID du joueur)
         res.json({ gameCode, playerId });
     } catch (error) {
