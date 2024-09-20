@@ -31,7 +31,13 @@ router.get('/:gameCode', async (req, res) => {
 
         if (gameStatus.started) {
             // Si la partie a démarré, rediriger vers la vue de la partie
-            res.render('game/game', { gameCode, playerId });
+            res.redirect('game');
+            // Envoyer une mise à jour via WebSocket à tous les clients
+            const broadcast = req.app.get('broadcast');
+            broadcast(JSON.stringify({
+                type: `gameStarted`,
+                gameCode: gameCode
+            }));
         } else {
             // Si la partie n'a pas démarré, afficher le message dans une vue avec le message d'erreur
             res.render('game_launcher/create_game', { gameCode, playerName, players, errorMessage: gameStatus.message });
