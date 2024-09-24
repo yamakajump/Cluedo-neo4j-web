@@ -36,14 +36,14 @@ function removeElement(array, element) {
 // Fonction pour récupérer les armes du jeu avec leurs images
 function getWeapons() {
     const weapons = [
-        { name: "A boule", image: path.join(__dirname, '../public/images/armes/carte_a_boule.png') },
-        { name: "Babyfoot", image: path.join(__dirname, '../public/images/armes/carte_babyfoot.png') },
-        { name: "DDOS", image: path.join(__dirname, '../public/images/armes/carte_ddos.png') },
-        { name: "Pain au chocolat", image: path.join(__dirname, '../public/images/armes/carte_pain_au_chocolat.png') },
-        { name: "PC Gamer", image: path.join(__dirname, '../public/images/armes/carte_pc_gamer.png') },
-        { name: "Plat sans viande", image: path.join(__dirname, '../public/images/armes/carte_plat_sans_viande.png') },
-        { name: "Poly de maths", image: path.join(__dirname, '../public/images/armes/carte_poly_de_maths.png') },
-        { name: "Velleda", image: path.join(__dirname, '../public/images/armes/carte_velleda.png') }
+        { name: "A boule", image: path.join('/images/carte/armes/carte_a_boule.png') },
+        { name: "Babyfoot", image: path.join('/images/carte/armes/carte_babyfoot.png') },
+        { name: "DDOS", image: path.join('/images/carte/armes/carte_ddos.png') },
+        { name: "Pain au chocolat", image: path.join('/images/carte/armes/carte_pain_au_chocolat.png') },
+        { name: "PC Gamer", image: path.join('/images/carte/armes/carte_pc_gamer.png') },
+        { name: "Plat sans viande", image: path.join('/images/carte/armes/carte_plat_sans_viande.png') },
+        { name: "Poly de maths", image: path.join('/images/carte/armes/carte_poly_de_maths.png') },
+        { name: "Velleda", image: path.join('/images/carte/armes/carte_velleda.png') }
     ];
     return weapons;
 }
@@ -51,14 +51,14 @@ function getWeapons() {
 // Fonction pour récupérer les personnages (profs) avec leurs images
 function getProfs() {
     const profs = [
-        { name: "Adam", image: path.join(__dirname, '../public/images/profs/carte_adam.png') },
-        { name: "Baudont", image: path.join(__dirname, '../public/images/profs/carte_baudont.png') },
-        { name: "Borne", image: path.join(__dirname, '../public/images/profs/carte_borne.png') },
-        { name: "Godin", image: path.join(__dirname, '../public/images/profs/carte_godin.png') },
-        { name: "Kamp", image: path.join(__dirname, '../public/images/profs/carte_kamp.png') },
-        { name: "Kerbellec", image: path.join(__dirname, '../public/images/profs/carte_kerbellec.png') },
-        { name: "Pham", image: path.join(__dirname, '../public/images/profs/carte_pham.png') },
-        { name: "Raut", image: path.join(__dirname, '../public/images/profs/carte_raut.png') }
+        { name: "Adam", image: path.join('/images/carte/profs/carte_adam.png') },
+        { name: "Baudont", image: path.join('/images/carte/profs/carte_baudont.png') },
+        { name: "Borne", image: path.join('/images/carte/profs/carte_borne.png') },
+        { name: "Godin", image: path.join('/images/carte/profs/carte_godin.png') },
+        { name: "Kamp", image: path.join('/images/carte/profs/carte_kamp.png') },
+        { name: "Kerbellec", image: path.join('/images/carte/profs/carte_kerbellec.png') },
+        { name: "Pham", image: path.join('/images/carte/profs/carte_pham.png') },
+        { name: "Raut", image: path.join('/images/carte/profs/carte_raut.png') }
     ];
     return profs;
 }
@@ -66,15 +66,15 @@ function getProfs() {
 // Fonction pour récupérer les salles avec leurs images
 function getRooms() {
     const rooms = [
-        { name: "Amphi A", image: path.join(__dirname, '../public/images/salles/carte_amphi_A.png') },
-        { name: "Amphi B", image: path.join(__dirname, '../public/images/salles/carte_amphi_B.png') },
-        { name: "Amphi C", image: path.join(__dirname, '../public/images/salles/carte_amphi_C.png') },
-        { name: "BU", image: path.join(__dirname, '../public/images/salles/carte_BU.png') },
-        { name: "Cafétéria", image: path.join(__dirname, '../public/images/salles/carte_caféteria.png') },
-        { name: "Imprimerie", image: path.join(__dirname, '../public/images/salles/carte_imprimerie.png') },
-        { name: "RU", image: path.join(__dirname, '../public/images/salles/carte_RU.png') },
-        { name: "Salle des profs", image: path.join(__dirname, '../public/images/salles/carte_salle_des_profs.png') },
-        { name: "Secrétariat", image: path.join(__dirname, '../public/images/salles/carte_secrétariat.png') }
+        { name: "Amphi A", image: path.join('/images/carte/salles/carte_amphi_A.png') },
+        { name: "Amphi B", image: path.join('/images/carte/salles/carte_amphi_B.png') },
+        { name: "Amphi C", image: path.join('/images/carte/salles/carte_amphi_C.png') },
+        { name: "BU", image: path.join('/images/carte/salles/carte_BU.png') },
+        { name: "Cafétéria", image: path.join('/images/carte/salles/carte_caféteria.png') },
+        { name: "Imprimerie", image: path.join('/images/carte/salles/carte_imprimerie.png') },
+        { name: "RU", image: path.join('/images/carte/salles/carte_RU.png') },
+        { name: "Salle des profs", image: path.join('/images/carte/salles/carte_salle_des_profs.png') },
+        { name: "Secrétariat", image: path.join('/images/carte/salles/carte_secrétariat.png') }
     ];
     return rooms;
 }

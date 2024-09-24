@@ -1,0 +1,69 @@
+/* Global container styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('/images/game/back_et_item.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.8); /* Background with transparency */
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    color: #333;
+}
+
+p {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.characters-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.character-card {
+    width: 120px;  /* Card width reduced */
+    padding: 0;  /* Remove padding */
+    background-color: transparent;  /* Remove background color */
+    border-radius: 8px;
+    box-shadow: none;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.character-card img {
+    width: 100px;  /* Reduce image size */
+    height: 140px; /* Adjust height to match new size */
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;  /* Pointer to indicate clickable */
+    transition: transform 0.2s ease-in-out;
+}
+
+.character-card img:hover {
+    transform: scale(1.1);  /* Scale the image slightly on hover */
+}
+
+.character-card:hover {
+    transform: none;  /* Ensure the entire card doesn't scale, only the image */
+}
+
+.character-card p {
+    margin-top: 5px;
+    color: #444;
+    font-size: 14px;
+}

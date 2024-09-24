@@ -10,9 +10,9 @@ const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
 
 /* GET game page. */
 router.get('/', async function(req, res, next) {
-    const { gameCode, playerId } = req.session;
+    const { gameCode, playerId, playerName } = req.session;
 
-    if (!gameCode || !playerId) {
+    if (!gameCode || !playerId || !playerName) {
         return res.redirect('/');
     }
 
@@ -25,7 +25,7 @@ router.get('/', async function(req, res, next) {
         const gameStatus = gameStatusResponse.data;
 
         if (gameStatus.started && !gameStatus.allPlayersHaveCharacter) {
-            return res.render('game/initialize/choose_character');  // Redirige vers la sélection de personnage
+            return res.render('game/initialize/choose_character', { gameCode, playerName, playerId });  // Redirige vers la sélection de personnage
         }
 
         // 2. Vérifier si c'est le tour du joueur
