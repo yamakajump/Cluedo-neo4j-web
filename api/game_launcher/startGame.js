@@ -54,27 +54,27 @@ router.post('/', async (req, res) => {
         const profs = getProfs().map(p => p.name);
         const rooms = getRooms().map(r => r.name);
 
-        // Étape 1 : Initialiser les nœuds des armes, profs et salles dans la base de données
+        // Étape 1 : Initialiser les nœuds des armes, profs et salles dans la base de données en incluant le gameCode
         const transaction = session.beginTransaction();
         try {
             for (let weapon of weapons) {
                 await transaction.run(
-                    `CREATE (:Arme {name: $weapon})`,
-                    { weapon }
+                    `CREATE (:Arme {name: $weapon, gameCode: $gameCode})`,  // Ajout du gameCode
+                    { weapon, gameCode }
                 );
             }
 
             for (let room of rooms) {
                 await transaction.run(
-                    `CREATE (:Pièce {name: $room})`,
-                    { room }
+                    `CREATE (:Pièce {name: $room, gameCode: $gameCode})`,  // Ajout du gameCode
+                    { room, gameCode }
                 );
             }
 
             for (let prof of profs) {
                 await transaction.run(
-                    `CREATE (:Personnage {name: $prof})`,
-                    { prof }
+                    `CREATE (:Personnage {name: $prof, gameCode: $gameCode})`,  // Ajout du gameCode
+                    { prof, gameCode }
                 );
             }
 
@@ -85,7 +85,7 @@ router.post('/', async (req, res) => {
             return res.json({ message: 'Erreur lors de l\'initialisation des éléments.', started: false });
         }
 
-        // Étape 2 : Créer les relations entre les salles
+        // Étape 2 : Créer les relations entre les salles (pas de changement nécessaire ici)
         const roomRelations = [
             { from: 'RU', to: ['Cafétéria', 'Amphi B'] },
             { from: 'BU', to: ['Cafétéria', 'Amphi C'] },
@@ -103,9 +103,9 @@ router.post('/', async (req, res) => {
             for (let relation of roomRelations) {
                 for (let target of relation.to) {
                     await relationTransaction.run(
-                        `MATCH (r1:Pièce {name: $from}), (r2:Pièce {name: $to})
+                        `MATCH (r1:Pièce {name: $from, gameCode: $gameCode}), (r2:Pièce {name: $to, gameCode: $gameCode})
                          CREATE (r1)-[:A_ACCES]->(r2)`,
-                        { from: relation.from, to: target }
+                        { from: relation.from, to: target, gameCode }
                     );
                 }
             }
@@ -124,10 +124,10 @@ router.post('/', async (req, res) => {
         const solutionTransaction = session.beginTransaction();
         try {
             await solutionTransaction.run(
-                `MATCH (p:Personnage {name: $murderer}), (a:Arme {name: $weapon}), (r:Pièce {name: $room})
+                `MATCH (p:Personnage {name: $murderer, gameCode: $gameCode}), (a:Arme {name: $weapon, gameCode: $gameCode}), (r:Pièce {name: $room, gameCode: $gameCode})
                  CREATE (p)-[:A_TUE_DANS]->(r),
                         (p)-[:A_UTILISE]->(a)`,
-                { murderer, weapon, room }
+                { murderer, weapon, room, gameCode }
             );
             await solutionTransaction.commit();
         } catch (err) {
@@ -139,11 +139,11 @@ router.post('/', async (req, res) => {
         // Étape 4 : Distribuer les cartes aux joueurs
         const playersResult = await session.run(
             `MATCH (j:Joueur)-[:JOUE_DANS]->(p:Partie {code: $gameCode})
-             RETURN j.id AS playerId`,  // Utiliser l'ID du joueur
+             RETURN j.id AS playerId`,
             { gameCode }
         );
 
-        const players = playersResult.records.map(record => record.get('playerId'));  // Récupérer les IDs des joueurs
+        const players = playersResult.records.map(record => record.get('playerId'));
         let allElements = [...profs, ...weapons, ...rooms];
         removeElement(allElements, murderer);
         removeElement(allElements, weapon);
@@ -156,9 +156,9 @@ router.post('/', async (req, res) => {
             for (let element of allElements) {
                 const playerId = players[currentPlayerIndex];
                 await cardTransaction.run(
-                    `MATCH (j:Joueur {id: $playerId}), (e {name: $element})
+                    `MATCH (j:Joueur {id: $playerId}), (e {name: $element, gameCode: $gameCode})
                      CREATE (j)-[:POSSEDE]->(e)`,
-                    { playerId, element }
+                    { playerId, element, gameCode }
                 );
                 currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
             }

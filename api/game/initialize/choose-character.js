@@ -10,30 +10,32 @@ router.get('/:gameCode', async (req, res) => {
 
     try {
         // Récupérer tous les personnages disponibles (profs)
-        const allProfs = getProfs();
+        const allProfs = getProfs();  // Format : { name, image }
         const allProfsNames = allProfs.map(prof => prof.name);
 
-        // Récupérer les personnages déjà sélectionnés dans la partie
+        // Récupérer les personnages déjà sélectionnés dans la partie en tenant compte du gameCode
         const selectedProfsResult = await session.run(
-            `MATCH (j:Joueur)-[:INCARNE_PAR]->(p:Personnage)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
-             RETURN p.name AS selectedProfName, j.id AS playerId`,
+            `MATCH (j:Joueur)-[:INCARNE_PAR]->(p:Personnage), (j)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
+             RETURN p.name AS selectedProfName, j.name AS playerName;`,
             { gameCode }
         );
 
-        console.log(selectedProfsResult.records);
-
-        // Créer un tableau de personnages déjà sélectionnés
-        const selectedProfs = selectedProfsResult.records.map(record => ({
-            name: record.get('selectedProfName'),
-            playerId: record.get('playerId')
-        }));
+        // Créer un tableau de personnages déjà sélectionnés avec leur image
+        const selectedProfs = selectedProfsResult.records.map(record => {
+            const prof = allProfs.find(p => p.name === record.get('selectedProfName'));
+            return {
+                name: prof.name,
+                image: prof.image,
+                playerName: record.get('playerName')  // Récupérer le nom du joueur lié à ce personnage
+            };
+        });
 
         // Filtrer les personnages disponibles
         const availableProfs = allProfs.filter(prof => {
             return !selectedProfs.some(selected => selected.name === prof.name);
         });
 
-        // Retourner les personnages sélectionnés et disponibles
+        // Retourner les personnages sélectionnés et disponibles avec les mêmes attributs (name, image)
         res.json({
             selectedProfs,
             availableProfs

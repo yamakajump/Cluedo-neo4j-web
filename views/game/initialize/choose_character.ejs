@@ -57,8 +57,8 @@
                     const div = document.createElement('div');
                     div.className = 'character-card';
                     div.innerHTML = `
-                        <img src="/images/profs/carte_${prof.name.toLowerCase()}.png" alt="${prof.name}">
-                        <p>${prof.name} (Joueur : ${prof.playerId})</p>
+                        <img src="${prof.image}" alt="${prof.name}">
+                        <p>${prof.playerName}</p>
                     `;
                     selectedProfsContainer.appendChild(div);
                 });
