@@ -60,35 +60,43 @@ router.get('/', async function(req, res, next) {
     }
 });
 
-/* POST game actions (ex: making a hypothesis) */
+/* POST game actions */
 router.post('/', async function(req, res, next) {
-    const { gameCode, playerId } = req.session;
-    const { action, suspect, room, weapon } = req.body;  // Action envoyée depuis le front-end
+    const { gameCode, playerId, playerName } = req.session;
+
+    if (!gameCode || !playerId || !playerName) {
+        return res.redirect('/');
+    }
+
+    // Récupérer les informations du corps de la requête
+    const { type, characterName } = req.body;
 
     try {
-        if (action === 'make-hypothesis') {
-            const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/make-hypothesis`, {
+        if (type === 'select-character') {
+            // Appel à l'API pour choisir le personnage
+            const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/initialize/select-character`, {
                 playerId,
                 gameCode,
-                suspect,
-                room,
-                weapon
+                characterName
             });
 
-            res.json(response.data);
-        } else if (action === 'end-turn') {
-            const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/end-turn`, {
-                playerId,
-                gameCode
-            });
+            const result = response.data;
 
-            res.json(response.data);
+            if (response.status === 200 && result.message === 'Personnage sélectionné avec succès.') {
+                res.json({ success: true, message: result.message });
+            } else {
+                res.json({ success: false, message: result.message });
+            }
+        } else {
+            // Autres actions de jeu (ex: hypothèses, tours, etc.)
+            res.json({ success: false, message: 'Action non reconnue.' });
         }
-
     } catch (error) {
-        console.error('Erreur lors de l\'action dans la partie :', error);
-        res.status(500).json({ message: 'Erreur lors de l\'action dans la partie.' });
+        console.error('Erreur lors de l\'action du jeu :', error);
+        res.status(500).json({ success: false, message: 'Erreur lors de l\'action du jeu.' });
     }
 });
+
+module.exports = router;
 
 module.exports = router;

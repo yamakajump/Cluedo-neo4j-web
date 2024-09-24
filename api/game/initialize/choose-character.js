@@ -15,10 +15,12 @@ router.get('/:gameCode', async (req, res) => {
 
         // Récupérer les personnages déjà sélectionnés dans la partie
         const selectedProfsResult = await session.run(
-            `MATCH (j:Joueur)-[:INCARNE]->(p:Personnage)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
+            `MATCH (j:Joueur)-[:INCARNE_PAR]->(p:Personnage)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
              RETURN p.name AS selectedProfName, j.id AS playerId`,
             { gameCode }
         );
+
+        console.log(selectedProfsResult.records);
 
         // Créer un tableau de personnages déjà sélectionnés
         const selectedProfs = selectedProfsResult.records.map(record => ({

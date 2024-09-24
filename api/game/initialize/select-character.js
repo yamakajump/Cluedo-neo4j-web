@@ -4,15 +4,15 @@ const driver = require('../../../initializeNeo4j');
 
 // Choisir un personnage
 router.post('/', async (req, res) => {
-    const { playerId, gameCode, characterId } = req.body;
+    const { playerId, gameCode, characterName } = req.body;
     const session = driver.session();
 
     try {
         // Vérifier si le personnage est déjà pris
         const characterResult = await session.run(
-            `MATCH (c:Personnage {id: $characterId})-[:INCARNE_PAR]->(j:Joueur)
+            `MATCH (c:Personnage {name: $characterName})-[:INCARNE_PAR]->(j:Joueur)
              RETURN c`,
-            { characterId }
+            { characterName }
         );
 
         if (characterResult.records.length > 0) {
@@ -21,9 +21,9 @@ router.post('/', async (req, res) => {
 
         // Relier le joueur au personnage
         await session.run(
-            `MATCH (j:Joueur {id: $playerId}), (c:Personnage {id: $characterId})
-             CREATE (j)-[:INCARNE]->(c)`,
-            { playerId, characterId }
+            `MATCH (j:Joueur {id: $playerId}), (c:Personnage {name: $characterName})
+             CREATE (j)-[:INCARNE_PAR]->(c)`,
+            { playerId, characterName }
         );
 
         return res.json({ message: 'Personnage sélectionné avec succès.' });
