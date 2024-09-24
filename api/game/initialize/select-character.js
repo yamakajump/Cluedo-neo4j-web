@@ -8,21 +8,34 @@ router.post('/', async (req, res) => {
     const session = driver.session();
 
     try {
-        // Vérifier si le personnage est déjà pris dans cette partie
-        const characterResult = await session.run(
-            `MATCH (c:Personnage {name: $characterName, gameCode: $gameCode})-[:INCARNE_PAR]->(j:Joueur)
-             RETURN c`,
+        // Vérifier si le joueur a déjà pris un personnage dans cette partie
+        const playerHasCharacterResult = await session.run(
+            `MATCH (j:Joueur {id: $playerId})-[:INCARNE_PAR]->(p:Personnage)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
+             RETURN p`,
+            { playerId, gameCode }
+        );
+
+        if (playerHasCharacterResult.records.length > 0) {
+            return res.status(400).json({ message: 'Vous avez déjà sélectionné un personnage.' });
+        }
+
+        // Vérifier si le personnage est déjà pris dans cette partie spécifique
+        const characterAlreadyTakenResult = await session.run(
+            `MATCH (p:Personnage {name: $characterName})<-[:INCARNE_PAR]-(j:Joueur)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
+             RETURN p`,
             { characterName, gameCode }
         );
 
-        if (characterResult.records.length > 0) {
-            return res.status(400).json({ message: 'Personnage déjà pris.' });
+        if (characterAlreadyTakenResult.records.length > 0) {
+            return res.status(400).json({ message: 'Ce personnage est déjà pris par un autre joueur.' });
         }
 
         // Relier le joueur au personnage pour la partie spécifique
         await session.run(
-            `MATCH (j:Joueur {id: $playerId}), (c:Personnage {name: $characterName, gameCode: $gameCode})
-             CREATE (j)-[:INCARNE_PAR]->(c)`,
+            `MATCH (j:Joueur {id: $playerId}), (p:Personnage {name: $characterName})
+             MATCH (partie:Partie {code: $gameCode})
+             MERGE (p)-[:JOUE_DANS]->(partie)
+             CREATE (j)-[:INCARNE_PAR]->(p)`,
             { playerId, characterName, gameCode }
         );
 
@@ -30,7 +43,7 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         console.error('Erreur lors du choix du personnage :', error);
-        return res.json({ message: 'Erreur lors du choix du personnage.' });
+        return res.status(500).json({ message: 'Erreur lors du choix du personnage.' });
     } finally {
         await session.close();
     }
