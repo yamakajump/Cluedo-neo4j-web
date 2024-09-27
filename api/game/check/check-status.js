@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
         if (started) {
             const playersResult = await session.run(
                 `MATCH (p:Partie {code: $gameCode})<-[:JOUE_DANS]-(j:Joueur)
-                 OPTIONAL MATCH (j)-[:INCARNE]->(c:Personnage)
+                 OPTIONAL MATCH (j)-[:INCARNE_PAR]->(c:Personnage)
                  RETURN COUNT(j) AS totalPlayers, COUNT(c) AS playersWithCharacter`,
                 { gameCode }
             );
@@ -33,7 +33,10 @@ router.get('/', async (req, res) => {
             const totalPlayers = playersResult.records[0].get('totalPlayers').low;
             const playersWithCharacter = playersResult.records[0].get('playersWithCharacter').low;
 
+            console.log('totalPlayers', totalPlayers);
+            console.log('playersWithCharacter', playersWithCharacter);
             const allPlayersHaveCharacter = totalPlayers === playersWithCharacter;
+            console.log('allPlayersHaveCharacter', allPlayersHaveCharacter);
 
             return res.json({
                 started: true,

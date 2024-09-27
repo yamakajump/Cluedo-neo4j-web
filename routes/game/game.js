@@ -17,7 +17,7 @@ router.get('/', async function(req, res, next) {
     }
 
     try {
-        // 1. Vérifier si la partie a commencé
+        // Vérifier si la partie a commencé
         const gameStatusResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/check-status`, {
             params: { playerId, gameCode }
         });
@@ -25,10 +25,14 @@ router.get('/', async function(req, res, next) {
         const gameStatus = gameStatusResponse.data;
 
         if (gameStatus.started && !gameStatus.allPlayersHaveCharacter) {
-            return res.render('game/initialize/choose_character', { gameCode, playerName, playerId });  // Redirige vers la sélection de personnage
+            // Récupérer les personnages disponibles et sélectionnés
+            const charactersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/initialize/choose-character/${gameCode}`);
+            const { availableProfs, selectedProfs } = charactersResponse.data;
+
+            return res.render('game/initialize/choose_character', { gameCode, playerName, playerId, availableProfs, selectedProfs });  // Redirige vers la sélection de personnage
         }
 
-        // 2. Vérifier si c'est le tour du joueur
+        // Vérifier si c'est le tour du joueur
         const turnResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/check-turn`, {
             params: { playerId, gameCode }
         });
@@ -36,7 +40,7 @@ router.get('/', async function(req, res, next) {
         const isTurn = turnResponse.data.isTurn;
 
         if (isTurn) {
-            // 3. Vérifier si une hypothèse est en cours
+            // Vérifier si une hypothèse est en cours
             const hypothesisResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/hypothesis-status`, {
                 params: { playerId, gameCode }
             });
@@ -83,9 +87,26 @@ router.post('/', async function(req, res, next) {
             const result = response.data;
 
             if (response.status === 200 && result.message === 'Personnage sélectionné avec succès.') {
-                res.json({ success: true, message: result.message });
+                // Envoyer une mise à jour via WebSocket à tous les clients
+                const broadcast = req.app.get('broadcast');
+                broadcast(JSON.stringify({
+                    type: `playerChoose`,
+                    gameCode: gameCode
+                }));
+                return res.redirect('/game'); // Rafraîchir la page de jeu
             } else {
-                res.json({ success: false, message: result.message });
+                const charactersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/initialize/choose-character/${gameCode}`);
+                const { availableProfs, selectedProfs } = charactersResponse.data;
+
+                // Retourner la vue avec un message d'erreur
+                return res.render('game/initialize/choose_character', {
+                    gameCode,
+                    playerName,
+                    playerId,
+                    availableProfs,
+                    selectedProfs,
+                    errorMessage: result.message // Passer le message d'erreur à la vue
+                });
             }
         } else {
             // Autres actions de jeu (ex: hypothèses, tours, etc.)
@@ -93,10 +114,19 @@ router.post('/', async function(req, res, next) {
         }
     } catch (error) {
         console.error('Erreur lors de l\'action du jeu :', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de l\'action du jeu.' });
+        const charactersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/initialize/choose-character/${gameCode}`);
+        const { availableProfs, selectedProfs } = charactersResponse.data;
+
+        // Retourner la vue avec un message d'erreur
+        return res.render('game/initialize/choose_character', {
+            gameCode,
+            playerName,
+            playerId,
+            availableProfs,
+            selectedProfs,
+            errorMessage: 'Erreur lors de la sélection du personnage.' // Message d'erreur générique
+        });
     }
 });
-
-module.exports = router;
 
 module.exports = router;

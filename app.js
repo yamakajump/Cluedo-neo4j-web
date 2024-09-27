@@ -31,9 +31,6 @@ wss.on('connection', (ws) => {
         console.log('Message reçu:', message);
         // Traitement du message reçu
     });
-
-    // Envoyer un message lorsque la connexion est établie
-    ws.send('Bienvenue sur le serveur WebSocket!');
 });
 
 // Fonction pour diffuser des messages à tous les clients WebSocket

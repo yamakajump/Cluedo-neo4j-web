@@ -11,92 +11,71 @@
         <h1>Choisir un personnage</h1>
         <p>Choisissez un personnage parmi ceux disponibles :</p>
 
+        <!-- Afficher un message d'erreur si `errorMessage` est défini -->
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <div class="error-message">
+                <p style="color: red;"><%= errorMessage %></p>
+            </div>
+        <% } %>
+
         <!-- Conteneur pour les personnages disponibles -->
         <div id="availableProfs" class="characters-list">
-            <!-- Les personnages disponibles seront injectés ici via JavaScript -->
+            <!-- Les personnages disponibles seront injectés ici par le serveur -->
+            <% availableProfs.forEach(prof => { %>
+                <div class="character-card">
+                    <form method="POST" action="/game">
+                        <input type="hidden" name="characterName" value="<%= prof.name %>">
+                        <input type="hidden" name="type" value="select-character">
+                        <button type="submit" style="background:none;border:none;padding:0;">
+                            <img src="<%= prof.image %>" alt="<%= prof.name %>" style="cursor:pointer;">
+                        </button>
+                    </form>
+                </div>
+            <% }) %>
         </div>
 
         <h2>Personnages déjà sélectionnés :</h2>
         <!-- Conteneur pour les personnages déjà sélectionnés -->
         <div id="selectedProfs" class="characters-list">
-            <!-- Les personnages déjà sélectionnés seront injectés ici via JavaScript -->
+            <% selectedProfs.forEach(prof => { %>
+                <div class="character-card">
+                    <img src="<%= prof.image %>" alt="<%= prof.name %>">
+                    <p><%= prof.playerName %></p>
+                </div>
+            <% }) %>
         </div>
     </div>
-
     <script>
         const gameCode = '<%= gameCode %>';
-        const playerId = '<%= playerId %>';
+
+        // WebSocket pour suivre les mises à jour des joueurs
+        const ws = new WebSocket('ws://localhost:3001');
+
+        ws.onopen = () => {
+            console.log('Connecté au serveur WebSocket');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.gameCode === gameCode) {
+                if (data.type === 'playerChoose') {
+                    fetchCharacters();
+                }
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket :', error);
+        };
+
+        ws.onclose = () => {
+            console.log('Déconnecté du serveur WebSocket');
+        };
 
         // Fonction pour récupérer les personnages et mettre à jour l'affichage
         async function fetchCharacters() {
-            try {
-                // Appeler l'API pour obtenir les personnages disponibles et sélectionnés
-                const response = await fetch(`/api/game/initialize/choose-character/${gameCode}`);
-                const data = await response.json();
-
-                // Récupérer les containers HTML
-                const availableProfsContainer = document.getElementById('availableProfs');
-                const selectedProfsContainer = document.getElementById('selectedProfs');
-
-                // Vider les containers avant de les remplir
-                availableProfsContainer.innerHTML = '';
-                selectedProfsContainer.innerHTML = '';
-
-                // Ajouter les personnages disponibles
-                data.availableProfs.forEach(prof => {
-                    const div = document.createElement('div');
-                    div.className = 'character-card';
-                    div.innerHTML = `
-                        <img src="${prof.image}" alt="${prof.name}" onclick="chooseCharacter('${prof.name}')" style="cursor:pointer;">
-                    `;
-                    availableProfsContainer.appendChild(div);
-                });
-
-                // Ajouter les personnages sélectionnés
-                data.selectedProfs.forEach(prof => {
-                    const div = document.createElement('div');
-                    div.className = 'character-card';
-                    div.innerHTML = `
-                        <img src="${prof.image}" alt="${prof.name}">
-                        <p>${prof.playerName}</p>
-                    `;
-                    selectedProfsContainer.appendChild(div);
-                });
-            } catch (error) {
-                console.error('Erreur lors de la récupération des personnages :', error);
-            }
+            window.location.reload();
         }
-
-        // Fonction pour choisir un personnage
-        async function chooseCharacter(characterName) {
-            try {
-                const response = await fetch(`/game`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        gameCode,
-                        playerId,
-                        type: 'select-character',
-                        characterName
-                    })
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    alert('Personnage choisi avec succès !');
-                    fetchCharacters();  // Rafraîchir les personnages après le choix
-                } else {
-                    alert('Erreur lors du choix du personnage : ' + result.message);
-                }
-            } catch (error) {
-                console.error('Erreur lors du choix du personnage :', error);
-            }
-        }
-
-        // Appeler la fonction pour charger les personnages au démarrage
-        fetchCharacters();
     </script>
 </body>
 </html>
