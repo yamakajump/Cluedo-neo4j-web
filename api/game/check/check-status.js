@@ -33,10 +33,7 @@ router.get('/', async (req, res) => {
             const totalPlayers = playersResult.records[0].get('totalPlayers').low;
             const playersWithCharacter = playersResult.records[0].get('playersWithCharacter').low;
 
-            console.log('totalPlayers', totalPlayers);
-            console.log('playersWithCharacter', playersWithCharacter);
             const allPlayersHaveCharacter = totalPlayers === playersWithCharacter;
-            console.log('allPlayersHaveCharacter', allPlayersHaveCharacter);
 
             return res.json({
                 started: true,
