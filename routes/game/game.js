@@ -19,7 +19,7 @@ router.get('/', async function(req, res, next) {
     try {
         // Vérifier si la partie a commencé
         const gameStatusResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/check-status`, {
-            params: { playerId, gameCode }
+            params: { gameCode }
         });
 
         const gameStatus = gameStatusResponse.data;
@@ -41,7 +41,7 @@ router.get('/', async function(req, res, next) {
 
         if (isTurn) {
             // Vérifier si une hypothèse est en cours
-            const hypothesisResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/hypothesis-status`, {
+            const hypothesisResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/hypothesis-status`, { 
                 params: { playerId, gameCode }
             });
 
