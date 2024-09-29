@@ -47,12 +47,12 @@ router.get('/', async function(req, res, next) {
 
             const hypothesis = hypothesisResponse.data;
 
-            if (!hypothesis.suspect) {
-                return res.render('game/choose/choose_criminal');  // Choisir un criminel
-            } else if (!hypothesis.room) {
-                return res.render('game/choose/choose_room');  // Choisir une pièce
+            if (!hypothesis.room) {
+                return res.render('game/choose/choose_room');  
             } else if (!hypothesis.weapon) {
-                return res.render('game/choose/choose_weapon');  // Choisir une arme
+                return res.render('game/choose/choose_weapon');  
+            } else if (!hypothesis.suspect) {
+                return res.render('game/choose/choose_criminal');  
             }
         } else {
             return res.render('game/waiting_for_turn');  // Attente du tour du joueur

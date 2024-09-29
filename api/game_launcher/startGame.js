@@ -169,7 +169,25 @@ router.post('/', async (req, res) => {
             return res.json({ message: 'Erreur lors de la distribution des cartes.', started: false });
         }
 
-        // Démarrer la partie
+        // Étape 5 : mettre tous les joueurs dans la salle de départ (Cafétéria)
+        const startRoom = 'Cafétéria';
+        const startRoomTransaction = session.beginTransaction();
+        try {
+            for (let player of players) {
+                await startRoomTransaction.run(
+                    `MATCH (j:Joueur {id: $playerId}), (r:Pièce {name: $room, gameCode: $gameCode})
+                     CREATE (j)-[:EST_DANS]->(r)`,
+                    { playerId: player, room: startRoom, gameCode }
+                );
+            }
+            await startRoomTransaction.commit();
+        } catch (err) {
+            console.error('Erreur lors de la mise en place des joueurs dans la salle de départ :', err);
+            await startRoomTransaction.rollback();
+            return res.json({ message: 'Erreur lors de la mise en place des joueurs dans la salle de départ.', started: false });
+        }
+
+        // Étape 6 : Marquer la partie comme démarrée
         await session.run(
             `MATCH (p:Partie {code: $gameCode})
              SET p.started = true`,
