@@ -59,24 +59,31 @@ router.post('/', async (req, res) => {
         try {
             for (let weapon of weapons) {
                 await transaction.run(
-                    `CREATE (:Arme {name: $weapon, gameCode: $gameCode})`,  // Ajout du gameCode
+                    `CREATE (:Arme {name: $weapon, gameCode: $gameCode})`,
                     { weapon, gameCode }
                 );
             }
 
             for (let room of rooms) {
                 await transaction.run(
-                    `CREATE (:Pièce {name: $room, gameCode: $gameCode})`,  // Ajout du gameCode
+                    `CREATE (:Pièce {name: $room, gameCode: $gameCode})`,
                     { room, gameCode }
                 );
             }
 
             for (let prof of profs) {
                 await transaction.run(
-                    `CREATE (:Personnage {name: $prof, gameCode: $gameCode})`,  // Ajout du gameCode
+                    `CREATE (:Personnage {name: $prof, gameCode: $gameCode})`,
                     { prof, gameCode }
                 );
             }
+
+            // Création du nœud Hypothese et liaison avec la partie
+            await transaction.run(
+                `MATCH (p:Partie {code: $gameCode})
+                 CREATE (h:Hypothese {gameCode: $gameCode})-[:CONCERNE_PARTIE]->(p)`,
+                { gameCode }
+            );
 
             await transaction.commit();
         } catch (err) {
