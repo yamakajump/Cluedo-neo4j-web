@@ -111,8 +111,8 @@ app.use('/api/game/check/hypothesis-status', require('./api/game/check/hypothesi
 app.use('/api/game/initialize/choose-character', require('./api/game/initialize/choose-character'));
 app.use('/api/game/initialize/select-character', require('./api/game/initialize/select-character'));
 
-app.use('/api/game/initialize/end-turn', require('./api/game/end-turn'));
-app.use('/api/game/initialize/make-hypothesis', require('./api/game/make-hypothesis'));
+app.use('/api/game/updateTurn', require('./api/game/updateTurn'));
+app.use('/api/game/make-hypothesis', require('./api/game/make-hypothesis'));
 
 // Gestion des erreurs 404 et des autres erreurs
 app.use(function(req, res, next) {

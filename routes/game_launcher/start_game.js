@@ -30,6 +30,9 @@ router.get('/:gameCode', async (req, res) => {
         const gameStatus = response.data;
 
         if (gameStatus.started) {
+            // Initialiser le tour de la partie à partir du joueur avec l'ID le plus bas
+            await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/updateTurn`, { gameCode });
+
             // Si la partie a démarré, rediriger vers la vue de la partie
             res.redirect('game');
             // Envoyer une mise à jour via WebSocket à tous les clients
