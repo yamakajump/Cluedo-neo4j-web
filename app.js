@@ -106,6 +106,7 @@ app.use('/api/game_launcher/startGame', require('./api/game_launcher/startGame')
 // API pour la gestion du jeu
 app.use('/api/game/check/check-status', require('./api/game/check/check-status'));
 app.use('/api/game/check/check-turn', require('./api/game/check/check-turn'));
+app.use('/api/game/check/current-state', require('./api/game/check/current-state'));
 app.use('/api/game/check/hypothesis-status', require('./api/game/check/hypothesis-status'));
 
 app.use('/api/game/choose/choose-room', require('./api/game/choose/choose-room'));

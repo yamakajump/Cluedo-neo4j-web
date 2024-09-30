@@ -63,7 +63,7 @@
             const data = JSON.parse(event.data);
             if (data.gameCode === gameCode) {
                 if (data.type === 'playerChoose') {
-                    fetchCharacters();
+                    window.location.reload();
                 }
             }
         };
@@ -75,11 +75,6 @@
         ws.onclose = () => {
             console.log('Déconnecté du serveur WebSocket');
         };
-
-        // Fonction pour récupérer les personnages et mettre à jour l'affichage
-        async function fetchCharacters() {
-            window.location.reload();
-        }
     </script>
 </body>
 </html>
