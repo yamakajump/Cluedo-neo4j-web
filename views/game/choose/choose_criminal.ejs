@@ -1,1 +1,41 @@
-choose_criminal
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir un personnage</title>
+
+    <!-- icone du site -->
+    <link rel="icon" type="image/png" href="/images/logo/icon.png" />
+
+    <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Choisir un criminel</h1>
+        <p>Choisissez le suspect du crime :</p>
+
+        <!-- Afficher un message d'erreur si `errorMessage` est défini -->
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <div class="error-message">
+                <p style="color: red;"><%= errorMessage %></p>
+            </div>
+        <% } %>
+
+        <!-- Conteneur pour les personnages disponibles -->
+        <div id="availableSuspects" class="characters-list">
+            <% availableSuspects.forEach(suspect => { %>
+                <div class="character-card">
+                    <form method="POST" action="/game">
+                        <input type="hidden" name="suspectName" value="<%= suspect.name %>">
+                        <input type="hidden" name="type" value="select-suspect">
+                        <button type="submit" style="background:none;border:none;padding:0;">
+                            <img src="<%= suspect.image %>" alt="<%= suspect.name %>" style="cursor:pointer;">
+                        </button>
+                    </form>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</body>
+</html>

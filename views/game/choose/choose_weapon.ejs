@@ -1,1 +1,41 @@
-choose_weapon
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir une arme</title>
+
+    <!-- icone du site -->
+    <link rel="icon" type="image/png" href="/images/logo/icon.png" />
+
+    <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Choisir une arme</h1>
+        <p>Choisissez l'arme du crime :</p>
+
+        <!-- Afficher un message d'erreur si `errorMessage` est défini -->
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <div class="error-message">
+                <p style="color: red;"><%= errorMessage %></p>
+            </div>
+        <% } %>
+
+        <!-- Conteneur pour les armes disponibles -->
+        <div id="availableWeapons" class="characters-list">
+            <% availableWeapons.forEach(weapon => { %>
+                <div class="character-card">
+                    <form method="POST" action="/game">
+                        <input type="hidden" name="weaponName" value="<%= weapon.name %>">
+                        <input type="hidden" name="type" value="select-weapon">
+                        <button type="submit" style="background:none;border:none;padding:0;">
+                            <img src="<%= weapon.image %>" alt="<%= weapon.name %>" style="cursor:pointer;">
+                        </button>
+                    </form>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</body>
+</html>

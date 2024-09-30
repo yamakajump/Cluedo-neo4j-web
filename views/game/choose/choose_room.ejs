@@ -1,1 +1,42 @@
-choose_room
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir une salle</title>
+
+    <!-- icone du site -->
+    <link rel="icon" type="image/png" href="/images/logo/icon.png" />
+
+    <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Choisir une salle</h1>
+        <p>Choisissez dans quel salle vous voulez allez :</p>
+
+        <!-- Afficher un message d'erreur si `errorMessage` est défini -->
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <div class="error-message">
+                <p style="color: red;"><%= errorMessage %></p>
+            </div>
+        <% } %>
+
+        <!-- Conteneur pour les salles disponibles -->
+        <div id="availableRooms" class="characters-list">
+            <!-- Les salles disponibles seront injectées ici par le serveur -->
+            <% availableRooms.forEach(room => { %>
+                <div class="character-card">
+                    <form method="POST" action="/game">
+                        <input type="hidden" name="roomName" value="<%= room.name %>">
+                        <input type="hidden" name="type" value="select-room">
+                        <button type="submit" style="background:none;border:none;padding:0;">
+                            <img src="<%= room.image %>" alt="<%= room.name %>" style="cursor:pointer;">
+                        </button>
+                    </form>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</body>
+</html>
