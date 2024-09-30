@@ -115,6 +115,7 @@ app.use('/api/game/choose/choose-weapon', require('./api/game/choose/choose-weap
 app.use('/api/game/getter/getAccessibleRooms', require('./api/game/getter/getAccessibleRooms'));
 app.use('/api/game/getter/getAvailableWeapons', require('./api/game/getter/getAvailableWeapons'));
 app.use('/api/game/getter/getAvailableProfs', require('./api/game/getter/getAvailableProfs'));
+app.use('/api/game/getter/getPlayers', require('./api/game/getter/getPlayers'));
 
 app.use('/api/game/initialize/choose-character', require('./api/game/initialize/choose-character'));
 app.use('/api/game/initialize/select-character', require('./api/game/initialize/select-character'));

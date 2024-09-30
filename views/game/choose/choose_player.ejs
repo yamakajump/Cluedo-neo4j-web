@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir un joueur</title>
+
+    <!-- icone du site -->
+    <link rel="icon" type="image/png" href="/images/logo/icon.png" />
+
+    <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Choisir un joueur</h1>
+        <p>Choisissez un joueur à qui poser une question :</p>
+
+        <!-- Afficher un message d'erreur si `errorMessage` est défini -->
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <div class="error-message">
+                <p style="color: red;"><%= errorMessage %></p>
+            </div>
+        <% } %>
+
+        <!-- Conteneur pour les joueurs disponibles -->
+        <div id="availablePlayers" class="characters-list">
+            <!-- Les joueurs disponibles seront injectés ici par le serveur -->
+            <% availablePlayers.forEach(player => { %>
+                <div class="character-card">
+                    <form method="POST" action="/game">
+                        <input type="hidden" name="playerId" value="<%= player.id %>">
+                        <input type="hidden" name="type" value="choose-player">
+                        <button type="submit" style="background:none;border:none;padding:0;">
+                            <!-- Utilisation de l'image du personnage associé -->
+                            <img src="<%= player.characterImage || '/images/player_icon.png' %>" alt="<%= player.name %>" style="cursor:pointer;">
+                            <p><%= player.name %></p>
+                        </button>
+                    </form>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</body>
+</html>

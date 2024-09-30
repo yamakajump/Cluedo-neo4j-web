@@ -60,8 +60,6 @@ router.get('/', async function(req, res, next) {
                 // Appel à la nouvelle API pour récupérer les armes disponibles
                 const availableWeaponsResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getter/getAvailableWeapons`);
                 const { availableWeapons } = availableWeaponsResponse.data;
-
-                console.log(availableWeapons);
         
                 return res.render('game/choose/choose_weapon', { gameCode, playerId, playerName, availableWeapons });
             
@@ -72,10 +70,22 @@ router.get('/', async function(req, res, next) {
                 const { availableSuspects } = availableProfsResponse.data;
         
                 return res.render('game/choose/choose_criminal', { gameCode, playerId, playerName, availableSuspects });
+            
+            // Si tout est choisi, rediriger vers la sélection du joueur à interroger
+            } else {
+                // Appel à l'API pour récupérer les joueurs disponibles
+                const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getter/getPlayers/${gameCode}`);
+                const { players } = playersResponse.data;
+        
+                // Enlever le joueur actuel de la liste des joueurs disponibles
+                const availablePlayers = players.filter(player => player.id !== playerId);
+        
+                return res.render('game/choose/choose_player', { gameCode, playerId, playerName, availablePlayers });
             }
         } else {
             return res.render('game/waiting_for_turn');  // Attente du tour du joueur
         }
+        
 
     } catch (error) {
         console.error('Erreur lors de la récupération des informations du jeu :', error);
