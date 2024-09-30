@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
     try {
         // Vérifier si le joueur a déjà pris un personnage dans cette partie
         const playerHasCharacterResult = await session.run(
-            `MATCH (j:Joueur {id: $playerId})-[:INCARNE_PAR]->(p:Personnage)-[:JOUE_DANS]->(partie:Partie {code: $gameCode})
+            `MATCH (j:Joueur {id: $playerId})-[:INCARNE_PAR]->(p:Personnage {gameCode: $gameCode})
              RETURN p`,
             { playerId, gameCode }
         );
@@ -34,7 +34,6 @@ router.post('/', async (req, res) => {
         await session.run(
             `MATCH (j:Joueur {id: $playerId}), (p:Personnage {name: $characterName})
              MATCH (partie:Partie {code: $gameCode})
-             MERGE (p)-[:JOUE_DANS]->(partie)
              CREATE (j)-[:INCARNE_PAR]->(p)`,
             { playerId, characterName, gameCode }
         );
