@@ -52,13 +52,6 @@ router.get('/', async function(req, res, next) {
                 // Appel à la nouvelle API pour récupérer les salles accessibles
                 const accessibleRoomsResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getter/getAccessibleRooms/${gameCode}/${playerId}`);
                 const { accessibleRooms } = accessibleRoomsResponse.data;
-
-                // Envoyer une mise à jour via WebSocket à tous les clients
-                const broadcast = req.app.get('broadcast');
-                broadcast(JSON.stringify({
-                    type: `hypotheseChoose`,
-                    gameCode: gameCode
-                }));
         
                 return res.render('game/choose/choose_room', { gameCode, playerId, playerName, availableRooms: accessibleRooms });
             
@@ -67,13 +60,6 @@ router.get('/', async function(req, res, next) {
                 // Appel à la nouvelle API pour récupérer les armes disponibles
                 const availableWeaponsResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getter/getAvailableWeapons`);
                 const { availableWeapons } = availableWeaponsResponse.data;
-
-                // Envoyer une mise à jour via WebSocket à tous les clients
-                const broadcast = req.app.get('broadcast');
-                broadcast(JSON.stringify({
-                    type: `hypotheseChoose`,
-                    gameCode: gameCode
-                }));
         
                 return res.render('game/choose/choose_weapon', { gameCode, playerId, playerName, availableWeapons });
             
@@ -82,43 +68,49 @@ router.get('/', async function(req, res, next) {
                 // Appel à la nouvelle API pour récupérer les personnages disponibles
                 const availableProfsResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getter/getAvailableProfs`);
                 const { availableSuspects } = availableProfsResponse.data;
-
-                // Envoyer une mise à jour via WebSocket à tous les clients
-                const broadcast = req.app.get('broadcast');
-                broadcast(JSON.stringify({
-                    type: `hypotheseChoose`,
-                    gameCode: gameCode
-                }));
-        
                 return res.render('game/choose/choose_criminal', { gameCode, playerId, playerName, availableSuspects });
             
             // Si tout est choisi, rediriger vers la sélection du joueur à interroger
-            } else {
+            } else if (!hypothesis.interrogatedPlayerId) {
                 // Appel à l'API pour récupérer les joueurs disponibles
                 const playersResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/getter/getPlayers/${gameCode}`);
                 const { players } = playersResponse.data;
         
                 // Enlever le joueur actuel de la liste des joueurs disponibles
                 const availablePlayers = players.filter(player => player.id !== playerId);
-
-                // Envoyer une mise à jour via WebSocket à tous les clients
-                const broadcast = req.app.get('broadcast');
-                broadcast(JSON.stringify({
-                    type: `hypotheseChoose`,
-                    gameCode: gameCode
-                }));
         
                 return res.render('game/choose/choose_player', { gameCode, playerId, playerName, availablePlayers });
+                
+            // si tout est choisi, on attend la réponse du joueur interrogé
+            } else {
+                return res.render('game/choose/see_card');
             }
-        } else {
-            const currentGameStateResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/current-state/${gameCode}`);
-            const currentState = currentGameStateResponse.data;
 
-            return res.render('game/waiting_for_turn', {
-                gameCode,
-                activePlayerName: currentState.activePlayerName,
-                hypothesis: currentState.hypothesis
-            });
+
+        } else {
+            const currentGameStateResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/current-state/${gameCode}/${playerId}`);
+            const currentState = currentGameStateResponse.data;
+                    
+            console.log(currentState)
+
+            // Vérifier si le joueur actuel est celui qui est interrogé
+            if (currentState.interrogatedPlayer && currentState.interrogatedPlayer.id === playerId) {
+                // Rediriger vers la page `show_card` si le joueur est interrogé
+                return res.render('game/show_card', {
+                    gameCode,
+                    playerId,
+                    playerName,
+                    hypothesis: currentState.hypothesis, // On passe l'hypothèse
+                    possessedCards: currentState.possessedCards // On passe les cartes que le joueur possède
+                });
+            } else {
+                // Sinon, afficher la page d'attente classique `waiting_for_turn`
+                return res.render('game/waiting_for_turn', {
+                    gameCode,
+                    activePlayerName: currentState.activePlayerName,
+                    hypothesis: currentState.hypothesis
+                });
+            }
         }
         
 
@@ -198,6 +190,14 @@ router.post('/', async function(req, res, next) {
                 });
 
                 if (response.status === 200) {
+
+                    // Envoyer une mise à jour via WebSocket à tous les clients
+                    const broadcast = req.app.get('broadcast');
+                    broadcast(JSON.stringify({
+                        type: `hypotheseChoose`,
+                        gameCode: gameCode
+                    }));
+
                     return res.redirect('/game');  // Rediriger vers la page de jeu
                 } else {
                     return res.status(400).render('game/choose/choose_room', { errorMessage: 'Erreur lors de la sélection de la salle.' });
@@ -212,6 +212,14 @@ router.post('/', async function(req, res, next) {
                 });
 
                 if (response.status === 200) {
+
+                    // Envoyer une mise à jour via WebSocket à tous les clients
+                    const broadcast = req.app.get('broadcast');
+                    broadcast(JSON.stringify({
+                        type: `hypotheseChoose`,
+                        gameCode: gameCode
+                    }));
+                    
                     return res.redirect('/game');
                 } else {
                     return res.status(400).render('game/choose/choose_weapon', { errorMessage: 'Erreur lors de la sélection de l\'arme.' });
@@ -226,6 +234,14 @@ router.post('/', async function(req, res, next) {
                 });
 
                 if (response.status === 200) {
+
+                    // Envoyer une mise à jour via WebSocket à tous les clients
+                    const broadcast = req.app.get('broadcast');
+                    broadcast(JSON.stringify({
+                        type: `hypotheseChoose`,
+                        gameCode: gameCode
+                    }));
+                    
                     return res.redirect('/game');
                 } else {
                     return res.status(400).render('game/choose/choose_criminal', { errorMessage: 'Erreur lors de la sélection du suspect.' });
@@ -240,6 +256,14 @@ router.post('/', async function(req, res, next) {
                 });
 
                 if (response.status === 200) {
+
+                    // Envoyer une mise à jour via WebSocket à tous les clients
+                    const broadcast = req.app.get('broadcast');
+                    broadcast(JSON.stringify({
+                        type: `hypotheseChoose`,
+                        gameCode: gameCode
+                    }));
+                    
                     return res.redirect('/game');
                 } else {
                     return res.status(400).render('game/choose/choose_player', { errorMessage: 'Erreur lors de la sélection du joueur.' });

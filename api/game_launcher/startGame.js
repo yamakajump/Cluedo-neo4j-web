@@ -95,8 +95,8 @@ router.post('/', async (req, res) => {
         // Étape 2 : Créer les relations entre les salles (pas de changement nécessaire ici)
         const roomRelations = [
             { from: 'RU', to: ['Cafétéria', 'Amphi B'] },
-            { from: 'BU', to: ['Cafétéria', 'Amphi C'] },
-            { from: 'Cafétéria', to: ['Secrétariat', 'Amphi A', 'RU', 'BU', 'Imprimerie'] },
+            { from: 'BU', to: ['Cafétéria', 'Amphi C', 'Amphi B'] },
+            { from: 'Cafétéria', to: ['Secrétariat', 'Amphi A', 'Amphi B', 'RU', 'BU', 'Imprimerie'] },
             { from: 'Amphi A', to: ['Cafétéria', 'Secrétariat', 'Salle des profs'] },
             { from: 'Amphi B', to: ['RU', 'Cafétéria', 'BU', 'Amphi C'] },
             { from: 'Amphi C', to: ['Amphi B', 'BU'] },

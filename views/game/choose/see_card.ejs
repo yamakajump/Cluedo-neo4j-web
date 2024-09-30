@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voir la carte</title>
+    <link rel="icon" type="image/png" href="/images/logo/icon.png" />
+    <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+    <div class="container">
+        <h1>En attente de la réponse à l'hypothèse</h1>
+        <p>Veuillez patienter pendant que <strong><%= currentState.interrogatedPlayerName %></strong> vous montre une carte...</p>
+
+        <div class="hypothesis-info">
+            <h2>Hypothèse actuelle :</h2>
+            <div class="characters-list">
+                <!-- Afficher la carte de la salle uniquement si elle existe -->
+                <% if (hypothesis.room) { %>
+                <div class="character-card">
+                    <h3>Salle :</h3>
+                    <img src="<%= hypothesis.room %>" alt="Salle" />
+                </div>
+                <% } %>
+
+                <!-- Afficher la carte de l'arme uniquement si elle existe -->
+                <% if (hypothesis.weapon) { %>
+                <div class="character-card">
+                    <h3>Arme :</h3>
+                    <img src="<%= hypothesis.weapon %>" alt="Arme" />
+                </div>
+                <% } %>
+
+                <!-- Afficher la carte du personnage uniquement si elle existe -->
+                <% if (hypothesis.suspect) { %>
+                <div class="character-card">
+                    <h3>Personnage :</h3>
+                    <img src="<%= hypothesis.suspect %>" alt="Personnage" />
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <p><em>La carte vous sera bientôt montrée...</em></p>
+
+        <script>
+            const gameCode = '<%= gameCode %>';
+
+            // WebSocket pour recevoir la notification de la carte montrée
+            const ws = new WebSocket('ws://localhost:3001');
+
+            ws.onopen = () => {
+                console.log('Connecté au serveur WebSocket');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.gameCode === gameCode && data.type === 'cardShown') {
+                    window.location.reload(); // Reload pour voir la carte montrée
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('Erreur WebSocket :', error);
+            };
+
+            ws.onclose = () => {
+                console.log('Déconnecté du serveur WebSocket');
+            };
+        </script>
+    </div>
+</body>
+</html>

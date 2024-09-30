@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montrer une carte</title>
+    <link rel="icon" type="image/png" href="/images/logo/icon.png" />
+    <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Montrez une carte</h1>
+        <p>Vous avez été interrogé. Montrez une carte parmi celles que vous possédez :</p>
+
+        <div class="hypothesis-info">
+            <h2>Hypothèse posée :</h2>
+            <div class="characters-list">
+                <!-- Afficher la carte de la salle uniquement si elle est dans la liste des cartes possédées -->
+                <% if (possessedCards.includes('BU')) { %>
+                    <div class="character-card">
+                        <h3>Salle :</h3>
+                        <img src="<%= hypothesis.room %>" alt="Salle" />
+                    </div>
+                <% } %>
+
+                <!-- Afficher la carte de l'arme uniquement si elle est dans la liste des cartes possédées -->
+                <% if (possessedCards.includes('PC Gamer')) { %>
+                    <div class="character-card">
+                        <h3>Arme :</h3>
+                        <img src="<%= hypothesis.weapon %>" alt="Arme" />
+                    </div>
+                <% } %>
+
+                <!-- Afficher la carte du personnage uniquement si elle est dans la liste des cartes possédées -->
+                <% if (possessedCards.includes('Kamp')) { %>
+                    <div class="character-card">
+                        <h3>Personnage :</h3>
+                        <img src="<%= hypothesis.suspect %>" alt="Personnage" />
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Si aucune carte à montrer, afficher un bouton "Aucune carte" -->
+        <% if (possessedCards.length === 0) { %>
+            <form method="POST" action="/game/show_no_card">
+                <button type="submit">Aucune carte à montrer</button>
+            </form>
+        <% } %>
+    </div>
+</body>
+</html>
