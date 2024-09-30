@@ -109,6 +109,7 @@ app.use('/api/game/check/check-turn', require('./api/game/check/check-turn'));
 app.use('/api/game/check/current-state', require('./api/game/check/current-state'));
 app.use('/api/game/check/hypothesis-status', require('./api/game/check/hypothesis-status'));
 
+app.use('/api/game/choose/choose-player', require('./api/game/choose/choose-player'));
 app.use('/api/game/choose/choose-room', require('./api/game/choose/choose-room'));
 app.use('/api/game/choose/choose-suspect', require('./api/game/choose/choose-suspect'));
 app.use('/api/game/choose/choose-weapon', require('./api/game/choose/choose-weapon'));

@@ -28,8 +28,8 @@
             <% availablePlayers.forEach(player => { %>
                 <div class="character-card">
                     <form method="POST" action="/game">
-                        <input type="hidden" name="playerId" value="<%= player.id %>">
-                        <input type="hidden" name="type" value="choose-player">
+                        <input type="hidden" name="playerChoosedId" value="<%= player.id %>">
+                        <input type="hidden" name="type" value="select-player">
                         <button type="submit" style="background:none;border:none;padding:0;">
                             <!-- Utilisation de l'image du personnage associé -->
                             <img src="<%= player.characterImage || '/images/player_icon.png' %>" alt="<%= player.name %>" style="cursor:pointer;">

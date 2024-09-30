@@ -137,7 +137,9 @@ router.post('/', async function(req, res, next) {
     }
 
     // Récupérer les informations du corps de la requête
-    const { type, characterName, roomName, weaponName, suspectName } = req.body;
+    const { type, characterName, roomName, weaponName, suspectName, playerChoosedId } = req.body;
+
+    console.log("type : " + type)
 
     try {
         if (type === 'select-character') {
@@ -229,6 +231,19 @@ router.post('/', async function(req, res, next) {
                     return res.status(400).render('game/choose/choose_criminal', { errorMessage: 'Erreur lors de la sélection du suspect.' });
                 }
 
+            } else if (type === 'select-player') {
+                // Appel à l'API pour choisir le joueur à interroger
+                const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/choose/choose-player`, {
+                    playerId,
+                    gameCode,
+                    playerChoosedId
+                });
+
+                if (response.status === 200) {
+                    return res.redirect('/game');
+                } else {
+                    return res.status(400).render('game/choose/choose_player', { errorMessage: 'Erreur lors de la sélection du joueur.' });
+                }
             } else {
                 // Si l'action n'est pas reconnue
                 res.status(400).json({ success: false, message: 'Action non reconnue.' });

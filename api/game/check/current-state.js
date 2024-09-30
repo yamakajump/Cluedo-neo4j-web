@@ -9,8 +9,6 @@ router.get('/:gameCode', async (req, res) => {
     const session = driver.session();
 
     try {
-        console.log(`Requête reçue pour la partie avec le code: ${gameCode}`);
-
         // Obtenir le joueur actif dans la partie (via le tour)
         const turnResult = await session.run(
             `MATCH (p:Partie {code: $gameCode})
@@ -19,12 +17,10 @@ router.get('/:gameCode', async (req, res) => {
         );
 
         if (turnResult.records.length === 0 || !turnResult.records[0].get('activePlayerId')) {
-            console.log('Aucun joueur actif trouvé.');
             return res.status(404).json({ message: 'Aucun joueur actif trouvé.' });
         }
 
         const activePlayerId = turnResult.records[0].get('activePlayerId');
-        console.log(`ID du joueur actif: ${activePlayerId}`);
 
         // Récupérer le nom du joueur actif
         const playerResult = await session.run(
@@ -34,12 +30,10 @@ router.get('/:gameCode', async (req, res) => {
         );
 
         if (playerResult.records.length === 0 || !playerResult.records[0].get('activePlayerName')) {
-            console.log('Nom du joueur actif introuvable.');
             return res.status(404).json({ message: 'Nom du joueur actif introuvable.' });
         }
 
         const activePlayerName = playerResult.records[0].get('activePlayerName');
-        console.log(`Nom du joueur actif: ${activePlayerName}`);
 
         // Récupérer l'hypothèse actuelle basée uniquement sur le gameCode
         const hypothesisResult = await session.run(
@@ -58,8 +52,6 @@ router.get('/:gameCode', async (req, res) => {
             const weaponName = hypothesisResult.records[0].get('weapon');
             const suspectName = hypothesisResult.records[0].get('suspect');
 
-            console.log(`Hypothèse en cours - Salle: ${roomName}, Arme: ${weaponName}, Suspect: ${suspectName}`);
-
             // Utiliser les utils pour obtenir les chemins des images de la salle, arme et suspect
             const roomData = getRooms().find(room => room.name === roomName);
             const weaponData = getWeapons().find(weapon => weapon.name === weaponName);
@@ -70,10 +62,6 @@ router.get('/:gameCode', async (req, res) => {
                 weapon: weaponData ? weaponData.image : null,
                 suspect: suspectData ? suspectData.image : null
             };
-
-            console.log(`Images récupérées - Salle: ${hypothesis.room}, Arme: ${hypothesis.weapon}, Suspect: ${hypothesis.suspect}`);
-        } else {
-            console.log('Aucune hypothèse en cours.');
         }
 
         // Envoyer la réponse avec les détails du joueur actif et de l'hypothèse
