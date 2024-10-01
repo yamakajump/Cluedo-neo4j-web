@@ -58,7 +58,7 @@
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 if (data.gameCode === gameCode) {
-                    if (data.type === 'hypotheseChoose') {
+                    if (data.type === 'hypotheseChoose' || data.type === 'nextTurn') {
                         window.location.reload();
                     }
                 }

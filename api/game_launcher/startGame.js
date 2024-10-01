@@ -78,10 +78,10 @@ router.post('/', async (req, res) => {
                 );
             }
 
-            // Création du nœud Hypothese et liaison avec la partie
+            // Création du nœud Hypothese
             await transaction.run(
                 `MATCH (p:Partie {code: $gameCode})
-                 CREATE (h:Hypothese {gameCode: $gameCode})-[:CONCERNE_PARTIE]->(p)`,
+                 CREATE (h:Hypothese {gameCode: $gameCode, showCard: false})`,
                 { gameCode }
             );
 

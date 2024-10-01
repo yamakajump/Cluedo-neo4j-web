@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     try {
         // Rechercher l'hypothèse dans la partie en cours, y compris le joueur interrogé
         const hypothesisResult = await session.run(
-            `MATCH (h:Hypothese)-[:CONCERNE_PARTIE]->(p:Partie {code: $gameCode})
+            `MATCH (h:Hypothese {gameCode: $gameCode})
              OPTIONAL MATCH (h)-[:DANS]->(r:Pièce)
              OPTIONAL MATCH (h)-[:AVEC]->(a:Arme)
              OPTIONAL MATCH (h)-[:SUR]->(s:Personnage)

@@ -12,41 +12,68 @@
         <h1>Montrez une carte</h1>
         <p>Vous avez été interrogé. Montrez une carte parmi celles que vous possédez :</p>
 
-        <div class="hypothesis-info">
-            <h2>Hypothèse posée :</h2>
+        <!-- Afficher les cartes possédées par le joueur interrogé comme des boutons -->
+        <div class="possessed-cards">
+            <h2>Cartes que vous possédez :</h2>
             <div class="characters-list">
-                <!-- Afficher la carte de la salle uniquement si elle est dans la liste des cartes possédées -->
-                <% if (possessedCards.includes('BU')) { %>
+                <% possessedCards.forEach(card => { %>
                     <div class="character-card">
-                        <h3>Salle :</h3>
-                        <img src="<%= hypothesis.room %>" alt="Salle" />
+                        <form method="POST" action="/game">
+                            <input type="hidden" name="card" value="<%= card.type %>" />
+                            <input type="hidden" name="type" value="show-card">
+                            <button type="submit" style="background:none;border:none;padding:0;">
+                                <% if (card.type === 'room') { %>
+                                    <img src="<%= hypothesis.room %>" alt="Salle" />
+                                <% } %>
+                                <% if (card.type === 'weapon') { %>
+                                    <img src="<%= hypothesis.weapon %>" alt="Arme" />
+                                <% } %>
+                                <% if (card.type === 'suspect') { %>
+                                    <img src="<%= hypothesis.suspect %>" alt="Personnage" />
+                                <% } %>
+                            </button>
+                        </form>
                     </div>
-                <% } %>
-
-                <!-- Afficher la carte de l'arme uniquement si elle est dans la liste des cartes possédées -->
-                <% if (possessedCards.includes('PC Gamer')) { %>
-                    <div class="character-card">
-                        <h3>Arme :</h3>
-                        <img src="<%= hypothesis.weapon %>" alt="Arme" />
-                    </div>
-                <% } %>
-
-                <!-- Afficher la carte du personnage uniquement si elle est dans la liste des cartes possédées -->
-                <% if (possessedCards.includes('Kamp')) { %>
-                    <div class="character-card">
-                        <h3>Personnage :</h3>
-                        <img src="<%= hypothesis.suspect %>" alt="Personnage" />
-                    </div>
-                <% } %>
+                <% }); %>
             </div>
         </div>
 
-        <!-- Si aucune carte à montrer, afficher un bouton "Aucune carte" -->
+        <!-- Si le joueur ne possède aucune carte à montrer, afficher un bouton -->
         <% if (possessedCards.length === 0) { %>
-            <form method="POST" action="/game/show_no_card">
-                <button type="submit">Aucune carte à montrer</button>
+            <form method="POST" action="/game">
+                <input type="hidden" name="card" value="null" />
+                <input type="hidden" name="type" value="show-card">
+                <button type="submit" class="button">Aucune carte à montrer</button>
             </form>
         <% } %>
     </div>
+
+    <script>
+        const gameCode = '<%= gameCode %>';
+
+        // WebSocket pour suivre les mises à jour des joueurs en temps réel
+        const ws = new WebSocket('ws://localhost:3001');
+
+        ws.onopen = () => {
+            console.log('Connecté au serveur WebSocket');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.gameCode === gameCode) {
+                if (data.type === 'nextTurn') {
+                    window.location.reload();
+                }
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket :', error);
+        };
+
+        ws.onclose = () => {
+            console.log('Déconnecté du serveur WebSocket');
+        };
+    </script>
 </body>
 </html>

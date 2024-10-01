@@ -82,10 +82,39 @@ router.get('/', async function(req, res, next) {
                 return res.render('game/choose/choose_player', { gameCode, playerId, playerName, availablePlayers });
                 
             // si tout est choisi, on attend la réponse du joueur interrogé
-            } else {
-                return res.render('game/choose/see_card');
-            }
+        } else {
+            // Appel à l'API pour vérifier si une carte a été montrée
+            const showCardResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/check-show-card/${gameCode}/${playerId}`);
 
+            console.log(showCardResponse.data)
+        
+            // Si une carte a été montrée, afficher la page avec l'image de la carte
+            if (showCardResponse.status === 200 && showCardResponse.data.cardImage) {
+                return res.render('game/choose/see_card', {
+                    gameCode,
+                    playerId,
+                    playerName,
+                    cardType: showCardResponse.data.card,  // Le type de carte montré (weapon, room, suspect)
+                    cardImage: showCardResponse.data.cardImage  // L'image de la carte
+                });
+            } else if (showCardResponse.status === 200 && !showCardResponse.data.cardImage) {
+                // Si aucune carte n'a été montrée mais l'attente est en cours
+                return res.render('game/choose/see_card', {
+                    gameCode,
+                    playerId,
+                    playerName,
+                    message: showCardResponse.data.message || 'En attente de la réponse du joueur.'  // Message d'attente
+                });
+            } else {
+                // Si une erreur s'est produite ou aucune carte n'a été trouvée
+                return res.render('game/choose/see_card', {
+                    gameCode,
+                    playerId,
+                    playerName,
+                    message: 'Erreur lors de la récupération des informations.'
+                });
+            }
+        }
 
         } else {
             const currentGameStateResponse = await axios.get(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/check/current-state/${gameCode}/${playerId}`);
@@ -129,7 +158,7 @@ router.post('/', async function(req, res, next) {
     }
 
     // Récupérer les informations du corps de la requête
-    const { type, characterName, roomName, weaponName, suspectName, playerChoosedId } = req.body;
+    const { type, characterName, roomName, weaponName, suspectName, playerChoosedId, card } = req.body;
 
     console.log("type : " + type)
 
@@ -166,6 +195,28 @@ router.post('/', async function(req, res, next) {
                     errorMessage: result.message // Passer le message d'erreur à la vue
                 });
             }
+
+        } else if (type === 'show-card') {
+
+            const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/show-card`, {
+                gameCode,
+                playerId,
+                card
+            });
+
+            if (response.status === 200) {
+
+                // Envoyer une mise à jour via WebSocket à tous les clients
+                const broadcast = req.app.get('broadcast');
+                broadcast(JSON.stringify({
+                    type: `showCard`,
+                    gameCode: gameCode
+                }));
+
+                return res.redirect('/game');
+            } else {
+                return res.status(400).render('game/show_card', { errorMessage: 'Erreur lors de la révélation de la carte.' });
+            }            
 
         } else {
             // Vérifier si c'est bien le tour du joueur avant de lui permettre de faire une action
@@ -268,7 +319,29 @@ router.post('/', async function(req, res, next) {
                 } else {
                     return res.status(400).render('game/choose/choose_player', { errorMessage: 'Erreur lors de la sélection du joueur.' });
                 }
-            } else {
+            } else if (type === 'next-turn') {
+                // Appel à l'API pour passer au tour suivant
+                const response = await axios.post(`http://${SERVER_IP}:${EXPRESS_PORT}/api/game/next-turn`, {
+                    playerId,
+                    gameCode
+                });
+
+                if (response.status === 200) {
+
+                    // Envoyer une mise à jour via WebSocket à tous les clients
+                    const broadcast = req.app.get('broadcast');
+                    broadcast(JSON.stringify({
+                        type: `nextTurn`,
+                        gameCode: gameCode
+                    }));
+                    
+                    return res.redirect('/game');
+                } else {
+                    return res.status(400).render('game/waiting_for_turn', { errorMessage: 'Erreur lors du passage au tour suivant.' });
+                }
+            }
+            
+            else {
                 // Si l'action n'est pas reconnue
                 res.status(400).json({ success: false, message: 'Action non reconnue.' });
             }

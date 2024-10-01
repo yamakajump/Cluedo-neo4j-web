@@ -104,6 +104,7 @@ app.use('/api/game_launcher/joinGame', require('./api/game_launcher/joinGame'));
 app.use('/api/game_launcher/startGame', require('./api/game_launcher/startGame'));
 
 // API pour la gestion du jeu
+app.use('/api/game/check/check-show-card', require('./api/game/check/check-show-card'));
 app.use('/api/game/check/check-status', require('./api/game/check/check-status'));
 app.use('/api/game/check/check-turn', require('./api/game/check/check-turn'));
 app.use('/api/game/check/current-state', require('./api/game/check/current-state'));
@@ -122,8 +123,10 @@ app.use('/api/game/getter/getPlayers', require('./api/game/getter/getPlayers'));
 app.use('/api/game/initialize/choose-character', require('./api/game/initialize/choose-character'));
 app.use('/api/game/initialize/select-character', require('./api/game/initialize/select-character'));
 
-app.use('/api/game/updateTurn', require('./api/game/updateTurn'));
 app.use('/api/game/make-hypothesis', require('./api/game/make-hypothesis'));
+app.use('/api/game/next-turn', require('./api/game/next-turn'));
+app.use('/api/game/show-card', require('./api/game/show-card'));
+app.use('/api/game/updateTurn', require('./api/game/updateTurn'));
 
 // Gestion des erreurs 404 et des autres erreurs
 app.use(function(req, res, next) {

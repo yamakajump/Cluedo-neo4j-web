@@ -99,8 +99,7 @@ router.post('/', async (req, res) => {
 
         // 6. Ajouter le joueur à la partie
         await session.run(
-            `MERGE (j:Joueur {id: $playerId, name: $playerName})
-             SET j.owner = false
+            `MERGE (j:Joueur {id: $playerId, name: $playerName, loose: false, owner: false})
              MERGE (p:Partie {code: $gameCode})
              MERGE (j)-[:JOUE_DANS]->(p)`,
             { playerId, playerName, gameCode }
