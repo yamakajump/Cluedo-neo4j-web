@@ -1,0 +1,123 @@
+/* Global container styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('/images/game/back_et_item.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.book-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.book {
+    position: relative;
+    width: 1160px; /* Taille légèrement ajustée */
+    height: 800px;
+    background: url('/images/game/book.png') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-page, .right-page {
+    width: 45%;
+    height: 90%;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.center-book {
+    width: 10px; /* Simule la jointure au milieu des pages du livre */
+    height: 100%;
+    background: transparent;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.5);
+    cursor: pointer;
+}
+
+/* Responsive design pour petits écrans */
+@media (max-width: 768px) {
+    .book {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+    }
+
+    .left-page, .right-page {
+        width: 100%;
+    }
+
+    .center-book {
+        display: none;
+    }
+}
+
+/* Boutons pour les états */
+.state-btn {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #000;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.state-btn[data-state="none"] {
+    background-color: transparent;
+}
+
+.state-btn[data-state="cross"] {
+    background-color: #f44336;
+    color: white;
+    font-weight: bold;
+}
+
+.state-btn[data-state="check"] {
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+}
+
+/* Ajuste la taille et l'apparence dans la table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}

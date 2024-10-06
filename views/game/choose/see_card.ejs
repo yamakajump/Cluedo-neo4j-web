@@ -8,28 +8,36 @@
     <link rel="stylesheet" href="/css/game.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Carte montrée</h1>
+    <div class="wrapper">
+        <div class="container">
+            <h1>Carte montrée</h1>
 
-        <!-- Afficher l'image de la carte montrée -->
-        <% if (typeof cardImage !== 'undefined' && cardImage) { %>
-            <h2>Voici la carte montrée :</h2>
-            <div class="characters-list">
-                <div class="character-card">
-                    <img src="<%= cardImage %>" alt="Carte montrée" />
-                    <p>Type de carte : <strong><%= cardType === 'weapon' ? 'Arme' : cardType === 'room' ? 'Salle' : 'Personnage' %></strong></p>
+            <!-- Afficher l'image de la carte montrée -->
+            <% if (typeof cardImage !== 'undefined' && cardImage) { %>
+                <h2>Voici la carte montrée :</h2>
+                <div class="characters-list">
+                    <div class="character-card">
+                        <img src="<%= cardImage %>" alt="Carte montrée" />
+                        <p>Type de carte : <strong><%= cardType === 'weapon' ? 'Arme' : cardType === 'room' ? 'Salle' : 'Personnage' %></strong></p>
+                    </div>
                 </div>
-            </div>
-        <% } else { %>
-            <!-- Message d'attente si aucune carte n'a été montrée -->
-            <p><%= message || 'En attente de la réponse du joueur...' %></p>
-        <% } %>
+            <% } else { %>
+                <!-- Message d'attente si aucune carte n'a été montrée -->
+                <p><%= message || 'En attente de la réponse du joueur...' %></p>
+            <% } %>
 
-        <!-- Bouton pour passer au tour suivant -->
-        <form method="POST" action="/game">
-            <input type="hidden" name="type" value="next-turn">
-            <button type="submit" class="button">Passer au tour suivant</button>
-        </form>
+            <!-- Bouton pour passer au tour suivant -->
+            <form method="POST" action="/game">
+                <input type="hidden" name="type" value="next-turn">
+                <button type="submit" class="button">Passer au tour suivant</button>
+            </form>
+        </div>
+
+        <!-- bouton pour les actions -->
+        <div class="actions">
+            <a href="/game/book" class="button">Voir le carnet de detective</a>
+            <a href="/game/hypothese" class="button">Faire une proposition</a>
+        </div>
     </div>
 
     <script>

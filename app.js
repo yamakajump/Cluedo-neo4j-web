@@ -89,7 +89,9 @@ app.use('/join_game', require('./routes/game_launcher/join_game'));
 app.use('/exit_game', require('./routes/game_launcher/exit_game'));
 app.use('/start_game', require('./routes/game_launcher/start_game'));
 
+app.use('/game/book', require('./routes/game/detective_notebook'));
 app.use('/game', require('./routes/game/game'));
+app.use('/game/hypothese', require('./routes/game/hypothese_propose'));
 
 // Importer les routes de l'API
 app.use('/api/admin', require('./api/admin'));

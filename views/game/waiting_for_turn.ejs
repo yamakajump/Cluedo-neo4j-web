@@ -11,67 +11,75 @@
     <link rel="stylesheet" href="/css/game.css">
 </head>
 <body>
-    <div class="container">
-        <h1>En attente de votre tour</h1>
-        <p>Veuillez patienter, <strong><%= activePlayerName %></strong> est en train de jouer...</p>
+    <div class="wrapper">
+        <div class="container">
+            <h1>En attente de votre tour</h1>
+            <p>Veuillez patienter, <strong><%= activePlayerName %></strong> est en train de jouer...</p>
 
-        <!-- Afficher les cartes sélectionnées pour l'hypothèse -->
-        <div class="hypothesis-info">
-            <h2>Hypothèse actuelle :</h2>
-            <div class="characters-list">
-                <!-- Afficher la carte de la salle uniquement si elle existe -->
-                <% if (hypothesis.room) { %>
-                <div class="character-card">
-                    <h3>Salle :</h3>
-                    <img src="<%= hypothesis.room %>" alt="Salle" />
-                </div>
-                <% } %>
+            <!-- Afficher les cartes sélectionnées pour l'hypothèse -->
+            <div class="hypothesis-info">
+                <h2>Hypothèse actuelle :</h2>
+                <div class="characters-list">
+                    <!-- Afficher la carte de la salle uniquement si elle existe -->
+                    <% if (hypothesis.room) { %>
+                    <div class="character-card">
+                        <h3>Salle :</h3>
+                        <img src="<%= hypothesis.room %>" alt="Salle" />
+                    </div>
+                    <% } %>
 
-                <!-- Afficher la carte de l'arme uniquement si elle existe -->
-                <% if (hypothesis.weapon) { %>
-                <div class="character-card">
-                    <h3>Arme :</h3>
-                    <img src="<%= hypothesis.weapon %>" alt="Arme" />
-                </div>
-                <% } %>
+                    <!-- Afficher la carte de l'arme uniquement si elle existe -->
+                    <% if (hypothesis.weapon) { %>
+                    <div class="character-card">
+                        <h3>Arme :</h3>
+                        <img src="<%= hypothesis.weapon %>" alt="Arme" />
+                    </div>
+                    <% } %>
 
-                <!-- Afficher la carte du personnage uniquement si elle existe -->
-                <% if (hypothesis.suspect) { %>
-                <div class="character-card">
-                    <h3>Personnage :</h3>
-                    <img src="<%= hypothesis.suspect %>" alt="Personnage" />
+                    <!-- Afficher la carte du personnage uniquement si elle existe -->
+                    <% if (hypothesis.suspect) { %>
+                    <div class="character-card">
+                        <h3>Personnage :</h3>
+                        <img src="<%= hypothesis.suspect %>" alt="Personnage" />
+                    </div>
+                    <% } %>
                 </div>
-                <% } %>
             </div>
         </div>
 
-        <script>
-            const gameCode = '<%= gameCode %>';
-
-            // WebSocket pour suivre les mises à jour des joueurs en temps réel
-            const ws = new WebSocket('ws://localhost:3001');
-
-            ws.onopen = () => {
-                console.log('Connecté au serveur WebSocket');
-            };
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.gameCode === gameCode) {
-                    if (data.type === 'hypotheseChoose' || data.type === 'nextTurn') {
-                        window.location.reload();
-                    }
-                }
-            };
-
-            ws.onerror = (error) => {
-                console.error('Erreur WebSocket :', error);
-            };
-
-            ws.onclose = () => {
-                console.log('Déconnecté du serveur WebSocket');
-            };
-        </script>
+        <!-- bouton pour les actions -->
+        <div class="actions">
+            <a href="/game/book" class="button">Voir le carnet de detective</a>
+            <a href="/game/hypothese" class="button">Faire une proposition</a>
+        </div>
     </div>
+
+    <script>
+        const gameCode = '<%= gameCode %>';
+
+        // WebSocket pour suivre les mises à jour des joueurs en temps réel
+        const ws = new WebSocket('ws://localhost:3001');
+
+        ws.onopen = () => {
+            console.log('Connecté au serveur WebSocket');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.gameCode === gameCode) {
+                if (data.type === 'hypotheseChoose' || data.type === 'nextTurn') {
+                    window.location.reload();
+                }
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket :', error);
+        };
+
+        ws.onclose = () => {
+            console.log('Déconnecté du serveur WebSocket');
+        };
+    </script>
 </body>
 </html>
