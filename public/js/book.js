@@ -9,26 +9,35 @@ document.addEventListener("DOMContentLoaded", function() {
     const leftRooms = rooms.slice(0, halfLength);
     const rightRooms = rooms.slice(halfLength);
 
+    // Liste des éléments que Yamakajump possède
+    const yamakajumpItems = [
+        "A boule", "Babyfoot", "DDOS", "Velleda",
+        "Adam", "Kamp",
+        "Amphi B", "BU", "Cafétéria", "Imprimerie", "RU"
+    ];
+
     // Sélectionne les éléments du DOM
     const weaponsRoomsLeftTable = document.getElementById("weapons-rooms-left-table");
     const roomsProfsRightTable = document.getElementById("rooms-profs-right-table");
 
     // Fonction pour créer une ligne de tableau pour les armes et salles (moitié) sur la page de gauche
     weapons.forEach(weapon => {
+        const isYamakajump = yamakajumpItems.includes(weapon.name);
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${weapon.name}</td>
-            <td><button class="state-btn" data-state="none"></button></td>
+            <td><button class="state-btn" data-state="${isYamakajump ? 'check' : 'none'}">${isYamakajump ? '✔' : ''}</button></td>
             <td><button class="state-btn" data-state="none"></button></td>
         `;
         weaponsRoomsLeftTable.appendChild(row);
     });
 
     leftRooms.forEach(room => {
+        const isYamakajump = yamakajumpItems.includes(room.name);
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${room.name}</td>
-            <td><button class="state-btn" data-state="none"></button></td>
+            <td><button class="state-btn" data-state="${isYamakajump ? 'check' : 'none'}">${isYamakajump ? '✔' : ''}</button></td>
             <td><button class="state-btn" data-state="none"></button></td>
         `;
         weaponsRoomsLeftTable.appendChild(row);
@@ -36,26 +45,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Fonction pour créer une ligne de tableau pour les salles (moitié) et professeurs sur la page de droite
     rightRooms.forEach(room => {
+        const isYamakajump = yamakajumpItems.includes(room.name);
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${room.name}</td>
-            <td><button class="state-btn" data-state="none"></button></td>
+            <td><button class="state-btn" data-state="${isYamakajump ? 'check' : 'none'}">${isYamakajump ? '✔' : ''}</button></td>
             <td><button class="state-btn" data-state="none"></button></td>
         `;
         roomsProfsRightTable.appendChild(row);
     });
 
     profs.forEach(prof => {
+        const isYamakajump = yamakajumpItems.includes(prof.name);
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${prof.name}</td>
-            <td><button class="state-btn" data-state="none"></button></td>
+            <td><button class="state-btn" data-state="${isYamakajump ? 'check' : 'none'}">${isYamakajump ? '✔' : ''}</button></td>
             <td><button class="state-btn" data-state="none"></button></td>
         `;
         roomsProfsRightTable.appendChild(row);
     });
 
-    // Gère le changement d'état des boutons (comme déjà défini précédemment)
+    // Gère le changement d'état des boutons
     const buttons = document.querySelectorAll('.state-btn');
     buttons.forEach(button => {
         button.addEventListener('click', function() {
@@ -73,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
 
 // Fonction pour récupérer les armes du jeu avec leurs images
 function getWeapons() {

@@ -1,1 +1,54 @@
-end_gamee
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défaite - Cluedo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8d7da; /* Couleur d'alerte pour indiquer la défaite */
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 2px solid #f5c6cb; /* Bordure rouge claire */
+        }
+        h1 {
+            color: #721c24; /* Couleur rouge sombre pour le texte d'alerte */
+        }
+        p {
+            color: #721c24;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #dc3545; /* Rouge pour indiquer l'échec */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vous avez perdu !</h1>
+        <p>Malheureusement, votre hypothèse était incorrecte.<br>Mais vous pouvez continuer à regarder la partie !</p>
+        <a href="/"><button>Retour à l'accueil</button></a>
+    </div>
+</body>
+</html>

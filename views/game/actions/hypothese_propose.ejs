@@ -1,1 +1,99 @@
-hypothesis_propose
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choix Final - Cluedo</title>
+    <link rel="stylesheet" href="/css/game.css"> <!-- Assurez-vous d'avoir un fichier CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Choix Final</h1>
+        <form id="final-choice-form">
+            <label for="criminel">Criminel</label>
+            <select id="criminel" name="criminel">
+                <option value="Adam">Adam</option>
+                <option value="Baudont">Baudont</option>
+                <option value="Borne">Borne</option>
+                <option value="Godin">Godin</option>
+                <option value="Kamp">Kamp</option>
+                <option value="Kerbellec">Kerbellec</option>
+                <option value="Pham">Pham</option>
+                <option value="Raut">Raut</option>
+            </select>
+
+            <label for="arme">Arme</label>
+            <select id="arme" name="arme">
+                <option value="A boule">A boule</option>
+                <option value="Babyfoot">Babyfoot</option>
+                <option value="DDOS">DDOS</option>
+                <option value="Pain au chocolat">Pain au chocolat</option>
+                <option value="PC Gamer">PC Gamer</option>
+                <option value="Plat sans viande">Plat sans viande</option>
+                <option value="Poly de maths">Poly de maths</option>
+                <option value="Velleda">Velleda</option>
+            </select>
+
+            <label for="salle">Salle</label>
+            <select id="salle" name="salle">
+                <option value="Amphi A">Amphi A</option>
+                <option value="Amphi B">Amphi B</option>
+                <option value="Amphi C">Amphi C</option>
+                <option value="BU">BU</option>
+                <option value="Cafétéria">Cafétéria</option>
+                <option value="Imprimerie">Imprimerie</option>
+                <option value="RU">RU</option>
+                <option value="Salle des profs">Salle des profs</option>
+                <option value="Secrétariat">Secrétariat</option>
+            </select>
+
+            <button type="submit">Valider le choix final</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("final-choice-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Empêche la soumission du formulaire par défaut
+            window.location.href = "/end_game"; // Redirige vers une page factice
+        });
+    </script>
+</body>
+</html>
